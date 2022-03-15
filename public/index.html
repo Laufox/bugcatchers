@@ -16,7 +16,35 @@
 </head>
 
 <body>
-	Game will be here
+
+	<!-- Section for the startup screen -->
+	<section id="start-screen">
+
+		<h1>Bugcatchers: kill the virus</h1>
+
+		<!-- Form to enter a username and enter the game -->
+		<form id="name-form">
+			<label for="username">Your name:</label>
+			<input type="text" id="username" required autofocus>
+			<button type="submit">Enter queue</button>
+		</form>
+
+	</section>
+
+	<!-- Section for the waiting screen -->
+	<section id="waiting-screen" class="hide">
+
+		<h2>Waiting for opponent</h2>
+
+		<!-- Button to exit the queue -->
+		<button id="cancel-queue">Cancel</button>
+
+	</section>
+
+	<!-- Section for the game itself -->
+	<section id="game-screen" class="hide">
+
+	</section>
 
 	<!-- Bootstrap 5 script -->
 	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>
