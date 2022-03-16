@@ -22,3 +22,13 @@
 .hide {
 	display: none !important;
 }
+
+#game-screen {
+	background-color: rgb(118, 129, 129);
+	height: 100vh;
+}
+
+
+.black-border {
+	border: 5px solid black
+}
