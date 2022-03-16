@@ -3,11 +3,16 @@
  */
 
 // Import debug module
-const debug = require('debug')('chat:socket_controller');
+const debug = require('debug')('ktv:socket_controller');
 
 let io = null;
 
-const rooms = null;
+// Rooms for games and their users
+const rooms = [];
+// Number of rooms that exists
+let numberOfRooms = 0;
+// Number of people currently in queue
+let waitingQueue = 0;
 
 // When a client disconnects
 const handleDisconnect = function() {
@@ -16,13 +21,52 @@ const handleDisconnect = function() {
 
 // When a user joins a room
 const handleUserJoined = function(username, callback) {
+
+	// Varuable to know if the game should start or not
+	let startGame = false;
+
+	// If waiting queue is empty, create a new room
+	if (waitingQueue === 0) {
+		rooms.push({
+			// Set room id to numberOfRooms variable, then increase the numberOfRooms variable
+			room_id: numberOfRooms++,
+			// Object property to hold info about the users that is in the room
+			players: {}
+		});
+	}
+
+	// Use the latest room pushed to the rooms array so that we can add info to it 
+	const currentRoom = rooms[rooms.length - 1];
+
+	// Have the socket client to join the current room
+	this.join(currentRoom);
+	// Add clients username as property in the current room
+	currentRoom.players[this.id] = username;
 	
-	// Lete everyone know a client has connected
-	this.broadcast.emit('user:connected', username);
+	debug('List of rooms: ', rooms);
+	debug('Current room: ', currentRoom);
+
+	// Increase the waiting queue
+	waitingQueue++;
+
+	// If there is two clients in queue, prepare to start the game
+	if (waitingQueue === 2) {
+		debug('Client ready to start new game');
+		// Reset waiting queue variable
+		waitingQueue = 0;
+		// Set startGame variable to true
+		startGame = true;
+		// Tell the other clients in the room that a new game should start
+		this.broadcast.to(currentRoom).emit('game:start');
+	}
+
+	// Let everyone know a client has connected
+	// this.broadcast.emit('user:connected', username);
 
 	// Callback to client
 	callback({
 		success: true,
+		startGame
 	});
 }
 

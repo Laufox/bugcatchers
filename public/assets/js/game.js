@@ -12,7 +12,12 @@ let room = null;
 
 // When another client connects
 socket.on('user:connected', (username) => {
-	console.log(`${username} has connected`);
+	//console.log(`${username} has connected`);
+});
+
+// When a game is ready to start
+socket.on('game:start', () => {
+	console.log('Opponent found, game will begin');
 });
 
 // Event listener for when a user submits the name form
@@ -24,10 +29,17 @@ nameFormEl.addEventListener('submit', (e) => {
 	
 	// Inform the socket that client wants to join the game
 	socket.emit('user:joined', username, (status) => {
+		// If the server returns a successful callback
 		if (status.success) {
 			console.log('Welcome ', username);
+			// Hide start-screen element
 			startScreenEl.classList.add('hide');
+			// Show waiting-screen element
 			waitingScreenEl.classList.remove('hide');
+			// If the startGame property from callback is true, start new game 
+			if (status.startGame) {
+				console.log("Game will begin");
+			}
 		}
 	})
 	
