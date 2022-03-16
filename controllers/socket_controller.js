@@ -15,8 +15,12 @@ const handleDisconnect = function() {
 }
 
 // When a user joins a room
-const handleUserJoined = function(callback) {
+const handleUserJoined = function(username, callback) {
 	
+	// Lete everyone know a client has connected
+	this.broadcast.emit('user:connected', username);
+
+	// Callback to client
 	callback({
 		success: true,
 	});

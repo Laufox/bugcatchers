@@ -10,13 +10,25 @@ const waitingScreenEl = document.querySelector('#waiting-screen');
 let username = null;
 let room = null;
 
+// When another client connects
+socket.on('user:connected', (username) => {
+	console.log(`${username} has connected`);
+});
+
 // Event listener for when a user submits the name form
 nameFormEl.addEventListener('submit', (e) => {
 	e.preventDefault();
 
+	// Take username from the form submitted
 	username = nameFormEl.username.value;
-	console.log(username);
-
-	startScreenEl.classList.add('hide');
-	waitingScreenEl.classList.remove('hide');
+	
+	// Inform the socket that client wants to join the game
+	socket.emit('user:joined', username, (status) => {
+		if (status.success) {
+			console.log('Welcome ', username);
+			startScreenEl.classList.add('hide');
+			waitingScreenEl.classList.remove('hide');
+		}
+	})
+	
 });
