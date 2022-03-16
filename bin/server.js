@@ -7,7 +7,7 @@
 require('dotenv').config();
 
 const app = require('../app');
-const debug = require('debug')('chat:server');
+const debug = require('debug')('ktv:server');
 const http = require('http');
 const socketio = require('socket.io');
 const socket_Controller = require('../controllers/socket_controller');
