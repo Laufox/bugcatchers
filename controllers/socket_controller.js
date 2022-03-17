@@ -13,6 +13,12 @@ const rooms = [];
 let numberOfRooms = 0;
 // Number of people currently in queue
 let waitingQueue = 0;
+let timeToWait = 0;
+
+// Set time to wait to a random number between 0 and 5000
+const calcTimeToWait = () => {	
+	timeToWait = Math.round(Math.random()*5000);
+} 
 
 // When a client disconnects
 const handleDisconnect = function() {
@@ -56,8 +62,10 @@ const handleUserJoined = function(username, callback) {
 		waitingQueue = 0;
 		// Set startGame variable to true
 		startGame = true;
+		// Call function to set set timer
+		calcTimeToWait();
 		// Tell the other clients in the room that a new game should start
-		this.broadcast.to(currentRoom).emit('game:start');
+		this.broadcast.to(currentRoom).emit('game:start', timeToWait);
 	}
 
 	// Let everyone know a client has connected
@@ -66,7 +74,8 @@ const handleUserJoined = function(username, callback) {
 	// Callback to client
 	callback({
 		success: true,
-		startGame
+		startGame,
+		timeToWait
 	});
 }
 
