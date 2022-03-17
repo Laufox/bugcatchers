@@ -58,9 +58,6 @@ const startTimer = () => {
 
 // Function to start up a new round
 const gameRound = (timeToWait) => {
-	// Hide waiting screen and display game screen
-	waitingScreenEl.classList.add('hide');
-	gameScreenEl.classList.remove('hide');
 	console.log("Starting timer " + timeToWait);
 
 	// Wait before showing user wich square to click
@@ -75,6 +72,9 @@ socket.on('user:connected', (username) => {
 // When a game is ready to start
 socket.on('game:start', (timeToWait) => {
 	console.log('Opponent found, game will begin');
+	// Hide waiting screen and display game screen
+	waitingScreenEl.classList.add('hide');
+	gameScreenEl.classList.remove('hide');
 	gameRound(timeToWait);
 });
 
