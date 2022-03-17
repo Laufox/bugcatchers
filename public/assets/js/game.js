@@ -5,6 +5,7 @@ const socket = io();
 const startScreenEl = document.querySelector('#start-screen');
 const nameFormEl = document.querySelector('#name-form');
 const waitingScreenEl = document.querySelector('#waiting-screen');
+const gameScreenEl = document.querySelector('#game-screen');
 
 // Username to identify client
 let username = null;
@@ -12,12 +13,7 @@ let room = null;
 
 // When another client connects
 socket.on('user:connected', (username) => {
-	//console.log(`${username} has connected`);
-});
-
-// When a game is ready to start
-socket.on('game:start', () => {
-	console.log('Opponent found, game will begin');
+	console.log(`${username} has connected`);
 });
 
 // Event listener for when a user submits the name form
@@ -39,6 +35,8 @@ nameFormEl.addEventListener('submit', (e) => {
 			// If the startGame property from callback is true, start new game 
 			if (status.startGame) {
 				console.log("Game will begin");
+				waitingScreenEl.classList.add('hide');
+				gameScreenEl.classList.remove('hide');
 			}
 		}
 	})
