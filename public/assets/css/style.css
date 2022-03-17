@@ -1,4 +1,8 @@
-#start-screen, #waiting-screen {
+.hide {
+	display: none !important;
+}
+
+.start-screen, .waiting-screen {
 	width: 100vw;
 	height: 100vh;
 	background-color: rgb(118, 129, 129);
@@ -9,26 +13,43 @@
 	gap: 2rem;
 }
 
-#name-form {
+.input-form {
 	display: flex;
 	flex-flow: column;
 	gap: 0.5rem;
 }
 
-#name-form label {
+.input-form label {
 	font-size: 1.5rem;
 }
 
-.hide {
-	display: none !important;
-}
-
-#game-screen {
+.game-screen {
 	background-color: rgb(118, 129, 129);
 	height: 100vh;
+	width: 100%;
 }
 
 
 .black-border {
-	border: 5px solid black
+	border: 1px solid black
+}
+
+.play-field {
+	display: flex;
+	flex-wrap: wrap;
+	height: 600px;
+	cursor: url('../icons/space-gun.png'), auto;
+}
+
+.position {
+	height: 28%;
+	width: 28%;
+}
+
+.virus {
+	background-image: url('../icons/green-cartoon-corona-virus.png');
+	background-size: cover;
+	width: 120px;
+	height: 120px;
+	margin: 12px;
 }

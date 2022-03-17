@@ -3,7 +3,7 @@
  */
 
 // Import debug module
-const debug = require('debug')('chat:socket_controller');
+const debug = require('debug')('bugcatchers:socket_controller');
 
 let io = null;
 
