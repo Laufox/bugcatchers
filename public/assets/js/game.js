@@ -86,10 +86,20 @@ const gameRound = (timeToWait) => {
 	setTimeout(startTimer, timeToWait);
 }
 
-
 // When another client connects
 socket.on('user:connected', (username) => {
-	console.log(`${username} has connected`);
+	//console.log(`${username} has connected`);
+	// When a game is ready to start
+	
+});
+
+// When a game is ready to start
+socket.on('game:start', (timeToWait) => {
+	console.log('Opponent found, game will begin');
+	// Hide waiting screen and display game screen
+	waitingScreenEl.classList.add('hide');
+	gameScreenEl.classList.remove('hide');
+	gameRound(timeToWait);
 });
 
 
@@ -102,10 +112,20 @@ nameFormEl.addEventListener('submit', (e) => {
 	
 	// Inform the socket that client wants to join the game
 	socket.emit('user:joined', username, (status) => {
+		// If the server returns a successful callback
 		if (status.success) {
 			console.log('Welcome ', username);
+			// Hide start-screen element
 			startScreenEl.classList.add('hide');
+			// Show waiting-screen element
 			waitingScreenEl.classList.remove('hide');
+			// If the startGame property from callback is true, start new game 
+			if (status.startGame) {
+				console.log("Game will begin");
+				waitingScreenEl.classList.add('hide');
+				gameScreenEl.classList.remove('hide');
+				gameRound(status.timeToWait);				
+			}
 		}
 	})
 });
@@ -132,7 +152,7 @@ const randomPosition = () => {
 const virusTimer = () => {
 	// let randomizer = Math.floor(Math.random() * (3 - 1 + 1) + 1);
 
-	let timer;
+	let timer = null;
 	timer = setInterval(randomPosition, randomizer * 835);
 };
 virusTimer();

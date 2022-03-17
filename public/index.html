@@ -24,7 +24,7 @@
 		<form id="name-form" class="input-form">
 			<label for="username">Your name:</label>
 			<input type="text" id="username" required autofocus>
-			<button type="submit">Enter queue</button>
+			<button type="submit" class="btn btn-primary">Enter queue</button>
 		</form>
 	</section>
 
@@ -33,7 +33,8 @@
 		<h2>Waiting for opponent</h2>
 
 		<!-- Button to exit the queue -->
-		<button id="cancel-queue">Cancel</button>
+		<button onClick="window.location.reload()" type="button" id="cancel-queue" class="btn btn-primary px-3">Cancel</button>
+
 	</section>
 
 	<!-- Section for the game itself -->
