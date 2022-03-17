@@ -67,6 +67,8 @@ const gameRound = (timeToWait) => {
 // When another client connects
 socket.on('user:connected', (username) => {
 	//console.log(`${username} has connected`);
+	// When a game is ready to start
+	
 });
 
 // When a game is ready to start
@@ -97,7 +99,9 @@ nameFormEl.addEventListener('submit', (e) => {
 			// If the startGame property from callback is true, start new game 
 			if (status.startGame) {
 				console.log("Game will begin");
-				gameRound(status.timeToWait);
+				waitingScreenEl.classList.add('hide');
+				gameScreenEl.classList.remove('hide');
+				gameRound(status.timeToWait);				
 			}
 		}
 	})

@@ -20,10 +20,6 @@ const calcTimeToWait = () => {
 	timeToWait = Math.round(Math.random()*5000);
 } 
 
-// When a client disconnects
-const handleDisconnect = function() {
-	debug(`Client ${this.id} disconnected :(`);
-}
 
 // When a user joins a room
 const handleUserJoined = function(username, callback) {
@@ -78,6 +74,24 @@ const handleUserJoined = function(username, callback) {
 		timeToWait
 	});
 }
+
+// When a client disconnects
+const handleDisconnect = function() {
+	debug(`Client ${this.id} disconnected :(`);
+
+	// Find the room this socket is connected to
+	const room = rooms.find(lobby => lobby.players.hasOwnProperty(this.id));
+
+	//If socket is not in a room, do nothing and return
+	if(!room) {
+		return;
+	}
+	// Delete the player from the room
+	console.log("This player id", room.players[this.id]);
+	delete room.players[this.id];
+
+	waitingQueue--;
+}	
 
 // Export function
 module.exports = function(socket, _io) {
