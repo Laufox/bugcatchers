@@ -90,7 +90,10 @@ const handleDisconnect = function() {
 	console.log("This player id", room.players[this.id]);
 	delete room.players[this.id];
 
-	waitingQueue--;
+	if (waitingQueue > 0) {
+		waitingQueue--;
+	}
+	
 }	
 
 // Export function
