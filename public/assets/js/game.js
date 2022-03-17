@@ -25,7 +25,12 @@ const startTimer = () => {
 }
 
 const stopTimer = () => {
-
+	clearInterval(timer);
+	timeAfterRound = Date.now();
+	timePassed = timeAfterRound - timeBeforeRound;
+	console.log('It took you ' + timePassed + ' milliseconds to click');
+	playerTimeEl.innerText = `${Math.floor(timePassed/1000)} : ${timePassed%1000}`;
+	gameScreenEl.removeEventListener('click', stopTimer);
 }
 
 const secretSquareClick = () => {
@@ -36,18 +41,13 @@ const secretSquareClick = () => {
 	timeBeforeRound = Date.now();
 	console.log(timeBeforeRound);
 	timer = setInterval( () => {
-		timePassed+100;
+		timePassed+=100;
 		playerTimeEl.innerText = `${Math.floor(timePassed/1000)} : ${timePassed%1000}`;
 		// Update html element
 	}, 100 );
 
 	// Add eventlistener for secret square
-	gameScreenEl.addEventListener('click', () => {
-		clearInterval(timer);
-		timeAfterRound = Date.now();
-		timePassed = timeAfterRound - timeBeforeRound;
-		console.log('It took you ' + timePassed + ' milliseconds to click');
-	});
+	gameScreenEl.addEventListener('click', stopTimer);
 }
 
 const gameRound = (timeToWait) => {
