@@ -13,12 +13,15 @@ let room = null;
 
 // When another client connects
 socket.on('user:connected', (username) => {
-	
 	//console.log(`${username} has connected`);
 	// When a game is ready to start
-	socket.on('game:start', () => {
+	
+});
+
+socket.on('game:start', () => {
 	console.log('Opponent found, game will begin');
-	})
+	waitingScreenEl.classList.add('hide');
+	gameScreenEl.classList.remove('hide');
 });
 
 // Event listener for when a user submits the name form
