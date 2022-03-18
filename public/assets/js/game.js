@@ -39,6 +39,8 @@ let timer = null;
 // Variable for amount of milliseconds since 1 Jan 1970 at the point when the timer starts 
 let timeBeforeRound = null;
 
+let randomizePosition = null;
+
 // Funtion to stop timer and calculate player click time
 const stopTimer = () => {
 	// Stop the interval timer that prints time to user
@@ -52,12 +54,12 @@ const stopTimer = () => {
 	playerTimeEl.innerText = `${Math.floor(timePassed/1000)} : ${timePassed%1000}`;
 	// Remove the click event from secretSquare
 	// --- Change from game screen to the specific square --
-	gameScreenEl.removeEventListener('click', stopTimer);
+	randomizePosition.removeEventListener('click', stopTimer);
 	// Give time to server
 	socket.emit('game:round-result', timePassed, username);
 }
 
-const startTimer = () => {
+const startTimer = (virusPosition) => {
 	console.log("Wait time over, lets start!");
 
 	// Reset user click time
@@ -72,18 +74,26 @@ const startTimer = () => {
 	}, 10 );
 
 	// --- Display the square to click ---
+	randomizePosition = positionEl[virusPosition]
+	randomizePosition.classList.add('virus');
+
+	target = randomizePosition.id
 
 	// Add eventlistener for secret square that the user has to click
 	// --- Change from game screen to the specific square --
-	gameScreenEl.addEventListener('click', stopTimer);
+	randomizePosition.addEventListener('click', stopTimer);
 }
 
 // Function to start up a new round
-const gameRound = (timeToWait) => {
-	console.log("Starting timer " + timeToWait);
+const gameRound = (timeToWait, virusPosition) => {
+	console.log("Starting timer " + timeToWait + " for virus on position " + virusPosition);
+
+	positionEl.forEach(position => {
+		position.classList.remove('virus');
+	});
 
 	// Wait before showing user wich square to click
-	setTimeout(startTimer, timeToWait);
+	setTimeout(startTimer, timeToWait, virusPosition);
 }
 
 // When another client connects
@@ -94,12 +104,12 @@ socket.on('user:connected', (username) => {
 });
 
 // When a game is ready to start
-socket.on('game:start', (timeToWait) => {
+socket.on('game:start', (timeToWait, virusPosition) => {
 	console.log('Opponent found, game will begin');
 	// Hide waiting screen and display game screen
 	waitingScreenEl.classList.add('hide');
 	gameScreenEl.classList.remove('hide');
-	gameRound(timeToWait);
+	gameRound(timeToWait, virusPosition);
 });
 
 
@@ -124,7 +134,7 @@ nameFormEl.addEventListener('submit', (e) => {
 				console.log("Game will begin");
 				waitingScreenEl.classList.add('hide');
 				gameScreenEl.classList.remove('hide');
-				gameRound(status.timeToWait);				
+				gameRound(status.timeToWait, status.virusPosition);
 			}
 		}
 	})
@@ -155,7 +165,7 @@ const virusTimer = () => {
 	let timer = null;
 	timer = setInterval(randomPosition, randomizer * 835);
 };
-virusTimer();
+//virusTimer();
 
 
 // Destroy the virus function

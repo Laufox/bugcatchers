@@ -14,10 +14,12 @@ let numberOfRooms = 0;
 // Number of people currently in queue
 let waitingQueue = 0;
 let timeToWait = 0;
+let virusPosition = null;
 
 // Set time to wait to a random number between 0 and 5000
-const calcTimeToWait = () => {	
+const calcTimeAndPosition = () => {	
 	timeToWait = Math.round(Math.random()*5000);
+	virusPosition = Math.floor(Math.random() * 9);
 } 
 
 
@@ -59,9 +61,9 @@ const handleUserJoined = function(username, callback) {
 		// Set startGame variable to true
 		startGame = true;
 		// Call function to set set timer
-		calcTimeToWait();
+		calcTimeAndPosition();
 		// Tell the other clients in the room that a new game should start
-		this.broadcast.to(currentRoom).emit('game:start', timeToWait);
+		this.broadcast.to(currentRoom).emit('game:start', timeToWait, virusPosition);
 	}
 
 	// Let everyone know a client has connected
@@ -71,7 +73,8 @@ const handleUserJoined = function(username, callback) {
 	callback({
 		success: true,
 		startGame,
-		timeToWait
+		timeToWait,
+		virusPosition
 	});
 }
 
