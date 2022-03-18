@@ -29,6 +29,10 @@
 	width: 100%;
 }
 
+.score-field {
+	padding: 10px;
+}
+
 
 .black-border {
 	border: 1px solid black
@@ -37,7 +41,8 @@
 .play-field {
 	display: flex;
 	flex-wrap: wrap;
-	height: 600px;
+	padding: 20px;
+	height: 700px;
 	cursor: url('../icons/space-gun.png'), auto;
 }
 
