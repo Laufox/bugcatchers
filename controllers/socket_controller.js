@@ -34,6 +34,7 @@ const handleUserJoined = function(username, callback) {
 		rooms.push({
 			// Set room id to numberOfRooms variable, then increase the numberOfRooms variable
 			room_id: numberOfRooms++,
+			// numberOfPlayers: 0, 			-- Might be needed later
 			// Object property to hold info about the users that is in the room
 			players: {}
 		});
@@ -41,11 +42,16 @@ const handleUserJoined = function(username, callback) {
 
 	// Use the latest room pushed to the rooms array so that we can add info to it 
 	const currentRoom = rooms[rooms.length - 1];
+	// currentRoom.numberOfPlayers++;	-- Might be needed later
 
 	// Have the socket client to join the current room
 	this.join(currentRoom);
 	// Add clients username as property in the current room
 	currentRoom.players[this.id] = username;
+	// currentRoom.players[this.id] = {			-- Might be used later
+	// 	username,
+	// 	points: 0
+	// };
 	
 	debug('List of rooms: ', rooms);
 	debug('Current room: ', currentRoom);
@@ -72,6 +78,7 @@ const handleUserJoined = function(username, callback) {
 	// Callback to client
 	callback({
 		success: true,
+		room: currentRoom.room_id,
 		startGame,
 		timeToWait,
 		virusPosition

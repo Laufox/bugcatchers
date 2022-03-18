@@ -39,7 +39,8 @@ let timer = null;
 // Variable for amount of milliseconds since 1 Jan 1970 at the point when the timer starts 
 let timeBeforeRound = null;
 
-let randomizePosition = null;
+// Div where virus will display each round
+let randomizePositionEl = null;
 
 // Funtion to stop timer and calculate player click time
 const stopTimer = () => {
@@ -52,9 +53,9 @@ const stopTimer = () => {
 
 	// Show user the final time
 	playerTimeEl.innerText = `${Math.floor(timePassed/1000)} : ${timePassed%1000}`;
+
 	// Remove the click event from secretSquare
-	// --- Change from game screen to the specific square --
-	randomizePosition.removeEventListener('click', stopTimer);
+	randomizePositionEl.removeEventListener('click', stopTimer);
 	// Give time to server
 	socket.emit('game:round-result', timePassed, username);
 }
@@ -73,21 +74,21 @@ const startTimer = (virusPosition) => {
 		playerTimeEl.innerText = `${Math.floor(timePassed/1000)} : ${timePassed%1000}`;
 	}, 10 );
 
-	// --- Display the square to click ---
-	randomizePosition = positionEl[virusPosition]
-	randomizePosition.classList.add('virus');
+	// User virusPosition from server to pick wich div the virus gonna be at
+	randomizePositionEl = positionEl[virusPosition];
+	randomizePositionEl.classList.add('virus');
 
-	target = randomizePosition.id
+	target = randomizePositionEl.id;
 
 	// Add eventlistener for secret square that the user has to click
-	// --- Change from game screen to the specific square --
-	randomizePosition.addEventListener('click', stopTimer);
+	randomizePositionEl.addEventListener('click', stopTimer);
 }
 
 // Function to start up a new round
 const gameRound = (timeToWait, virusPosition) => {
 	console.log("Starting timer " + timeToWait + " for virus on position " + virusPosition);
 
+	// Make sure no div have virus class attached
 	positionEl.forEach(position => {
 		position.classList.remove('virus');
 	});
@@ -103,12 +104,13 @@ socket.on('user:connected', (username) => {
 	
 });
 
-// When a game is ready to start
+// When a game/round is ready to start
 socket.on('game:start', (timeToWait, virusPosition) => {
 	console.log('Opponent found, game will begin');
 	// Hide waiting screen and display game screen
 	waitingScreenEl.classList.add('hide');
 	gameScreenEl.classList.remove('hide');
+	// Start a new round with time and position given by server
 	gameRound(timeToWait, virusPosition);
 });
 
@@ -129,6 +131,8 @@ nameFormEl.addEventListener('submit', (e) => {
 			startScreenEl.classList.add('hide');
 			// Show waiting-screen element
 			waitingScreenEl.classList.remove('hide');
+			// Set room client is part of to room id given back by server
+			room = status.room;
 			// If the startGame property from callback is true, start new game 
 			if (status.startGame) {
 				console.log("Game will begin");
@@ -141,30 +145,30 @@ nameFormEl.addEventListener('submit', (e) => {
 });
 
 // Function to random position the viruses
-const randomPosition = () => {
-	positionEl.forEach(position => {
-		position.classList.remove('virus');
-	});
+// const randomPosition = () => {
+// 	positionEl.forEach(position => {
+// 		position.classList.remove('virus');
+// 	});
 
-	// randomize the position for the viruses
-	let randomizePosition = positionEl[Math.floor(Math.random() * 9)]
-	randomizePosition.classList.add('virus');
+// 	// randomize the position for the viruses
+// 	let randomizePosition = positionEl[Math.floor(Math.random() * 9)]
+// 	randomizePosition.classList.add('virus');
 
-	console.log(randomizePosition)
+// 	console.log(randomizePosition)
 
-	// target the virus
-	target = randomizePosition.id
+// 	// target the virus
+// 	target = randomizePosition.id
 
-	rounds++;
-};
+// 	rounds++;
+// };
 
-// Random timer for the virus
-const virusTimer = () => {
-	// let randomizer = Math.floor(Math.random() * (3 - 1 + 1) + 1);
+// // Random timer for the virus
+// const virusTimer = () => {
+// 	// let randomizer = Math.floor(Math.random() * (3 - 1 + 1) + 1);
 
-	let timer = null;
-	timer = setInterval(randomPosition, randomizer * 835);
-};
+// 	let timer = null;
+// 	timer = setInterval(randomPosition, randomizer * 835);
+// };
 //virusTimer();
 
 
