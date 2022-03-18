@@ -59,6 +59,7 @@ const stopTimer = () => {
 	// Remove the click event from secretSquare
 	// --- Change from game screen to the specific square --
 	randomizePosition.removeEventListener('click', stopTimer);
+
 	// Give time to server
 	socket.emit('game:round-result', timePassed, username);
 
@@ -196,7 +197,7 @@ const virusTimer = () => {
 	let timer = null;
 	timer = setInterval(randomPosition, randomizer * 835);
 };
-//virusTimer();
+// virusTimer();
 
 
 // Destroy the virus function
