@@ -13,8 +13,10 @@ const rooms = [];
 let numberOfRooms = 0;
 // Number of people currently in queue
 let waitingQueue = 0;
+// Time to wait before virus pop ups
 let timeToWait = 0;
 let virusPosition = null;
+let currentRoom;
 
 // Set time to wait to a random number between 0 and 5000
 const calcTimeAndPosition = () => {	
@@ -40,7 +42,7 @@ const handleUserJoined = function(username, callback) {
 	}
 
 	// Use the latest room pushed to the rooms array so that we can add info to it 
-	const currentRoom = rooms[rooms.length - 1];
+	currentRoom = rooms[rooms.length - 1];
 
 	// Have the socket client to join the current room
 	this.join(currentRoom);
@@ -74,7 +76,7 @@ const handleUserJoined = function(username, callback) {
 		success: true,
 		startGame,
 		timeToWait,
-		virusPosition
+		virusPosition,
 	});
 }
 
