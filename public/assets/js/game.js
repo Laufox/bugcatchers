@@ -26,7 +26,7 @@ let room = null;
 let score = 0;
 
 // Rounds
-let rounds = 9;
+let rounds = 0;
 
 // The target to kill virus
 let target;
