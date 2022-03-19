@@ -65,6 +65,7 @@ const stopTimer = () => {
 
 	// Exempel på hur det skulle kunna vara, player1Score är då spelaren med id 0, player2Score är spelare med id 1. Den tar bara in information från socket_controller och jämför resultatet här och matar ut det i endScreen.
 
+	// Use in own funtion game:over, take in parameter userScore, opponentScore
 	if(rounds === 10) {
 		waitingScreenEl.classList.add('hide');
 		gameScreenEl.classList.add('hide');
@@ -129,7 +130,16 @@ const gameRound = (timeToWait, virusPosition) => {
 	
 }
 
-
+socket.on('game:print-round', (winner, players) => {
+	if (winner === username) {
+		console.log('I won');
+	} else {
+		console.log('I lost');
+	}
+});
+// PUT ROUND RESULT HERE
+// game:round-result take parameter winner, p2reaction
+// THEN PUT PRINT-RESULT
 
 // When another client connects
 socket.on('user:connected', (username) => {

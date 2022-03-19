@@ -37,7 +37,8 @@ const handleUserJoined = function(username, callback) {
 			room_id: numberOfRooms++,
 			// numberOfPlayers: 0, 			-- Might be needed later
 			// Object property to hold info about the users that is in the room
-			players: {}
+			players: {},
+			roundsplayed: 0,
 		});
 	}
 
@@ -48,11 +49,12 @@ const handleUserJoined = function(username, callback) {
 	// Have the socket client to join the current room
 	this.join(currentRoom);
 	// Add clients username as property in the current room
-	currentRoom.players[this.id] = username;
-	// currentRoom.players[this.id] = {			-- Might be used later
-	// 	username,
-	// 	points: 0
-	// };
+	// currentRoom.players[this.id] = username;
+	currentRoom.players[this.id] = {
+		username,
+		points: 0,
+	 	previousReactionTime: null,
+	};
 	
 	debug('List of rooms: ', rooms);
 	debug('Current room: ', currentRoom);
@@ -98,7 +100,7 @@ const handleDisconnect = function() {
 		return;
 	}
 	// Delete the player from the room
-	console.log("This player id", room.players[this.id]);
+	console.log("This player id", room.players[this.id].username);
 	delete room.players[this.id];
 
 	if (waitingQueue > 0) {
@@ -108,18 +110,40 @@ const handleDisconnect = function() {
 }
 
 // Compare reaction time and decide who gets score
-const handleScore = function(reaction, player, score) {
+// Take room parameter instead of score
+const handleScore = function(reaction, player) {
 	// Find the room this socket is connected to
 	const room = rooms.find(lobby => lobby.players.hasOwnProperty(this.id));
 
+	room.players[this.id].previousReactionTime = reaction;
+
+	let foundNull = false;
+
+	Object.values(room.players).forEach( (player) => {
+		if (player.previousReactionTime === null) {
+			foundNull = true;
+		}
+	} )
+
+	if (!foundNull) {
+		console.log("Null found");
+		const p1RecTime = Object.values(room.players)[0].previousReactionTime;
+		const p2recTime = Object.values(room.players)[1].previousReactionTime;
+		const winningPlayer = p1RecTime < p2recTime ? Object.values(room.players)[0].username : Object.values(room.players)[1].username;
+		calcTimeAndPosition();
+		io.in(room).emit('game:print-round', winningPlayer, room.players);
+	};
 	// Find two players in the room
 
 	// Compare reaction time for the two players
+	// Only compare and emit if two reactiontimes is in room
 
 	const winningPlayer = room.players[this.id]
 	debug(`Client ${winningPlayer} won this round`);
 
+	// Emit with arguments winner true/false or name of winner and both reaction times
 	io.in(room).emit('game:round-result',)
+	// If 10 rounds played, emit to game:end
 }
 
 
