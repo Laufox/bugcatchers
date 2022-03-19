@@ -25,8 +25,12 @@
 
 .game-screen {
 	background-color: rgb(118, 129, 129);
-	height: 100vh;
+	height: 100%;
 	width: 100%;
+}
+
+.score-field {
+	padding: 10px;
 }
 
 
@@ -37,7 +41,8 @@
 .play-field {
 	display: flex;
 	flex-wrap: wrap;
-	height: 600px;
+	padding: 20px;
+	height: 700px;
 	cursor: url('../icons/space-gun.png'), auto;
 }
 
@@ -52,4 +57,12 @@
 	width: 120px;
 	height: 120px;
 	margin: 12px;
+}
+
+.winResult {
+	color: green;
+}
+
+.loseResult {
+	color: red;
 }

@@ -13,15 +13,16 @@ const rooms = [];
 let numberOfRooms = 0;
 // Number of people currently in queue
 let waitingQueue = 0;
+// Time to wait before virus pop ups
 let timeToWait = 0;
 let virusPosition = null;
+let currentRoom;
 
 // Set time to wait to a random number between 0 and 5000
 const calcTimeAndPosition = () => {	
 	timeToWait = Math.round(Math.random()*5000);
 	virusPosition = Math.floor(Math.random() * 9);
 } 
-
 
 // When a user joins a room
 const handleUserJoined = function(username, callback) {
@@ -81,7 +82,7 @@ const handleUserJoined = function(username, callback) {
 		room: currentRoom.room_id,
 		startGame,
 		timeToWait,
-		virusPosition
+		virusPosition,
 	});
 }
 
@@ -104,7 +105,23 @@ const handleDisconnect = function() {
 		waitingQueue--;
 	}
 	
-}	
+}
+
+// Compare reaction time and decide who gets score
+const handleScore = function(reaction, player, score) {
+	// Find the room this socket is connected to
+	const room = rooms.find(lobby => lobby.players.hasOwnProperty(this.id));
+
+	// Find two players in the room
+
+	// Compare reaction time for the two players
+
+	const winningPlayer = room.players[this.id]
+	debug(`Client ${winningPlayer} won this round`);
+
+	io.in(room).emit('game:round-result',)
+}
+
 
 // Export function
 module.exports = function(socket, _io) {
@@ -117,4 +134,6 @@ module.exports = function(socket, _io) {
 	// handle user joined
 	socket.on('user:joined', handleUserJoined);
 
+	// handle user score
+	socket.on('game:round-result', handleScore);
 }

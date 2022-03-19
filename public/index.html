@@ -18,7 +18,7 @@
 
 	<!-- Section for the startup screen -->
 	<section id="start-screen" class="start-screen">		<!--dont forget to remove hide class-->
-		<h1>Bugcatchers: kill the virus</h1>
+		<h1>Bugcatchers: Kill the virus</h1>
 
 		<!-- Form to enter a username and enter the game -->
 		<form id="name-form" class="input-form">
@@ -33,16 +33,16 @@
 		<h2>Waiting for opponent</h2>
 
 		<!-- Button to exit the queue -->
-		<button onClick="window.location.reload()" type="button" id="cancel-queue" class="btn btn-primary px-3">Cancel</button>
+		<button onClick="window.location.reload()" type="button" class="btn btn-primary px-3">Cancel</button>
 
 	</section>
 
 	<!-- Section for the game itself -->
 	<section id="game-screen" class="game-screen hide">	<!-- dont forget to add hide-->
-		<h1 class="text-center pt-5">Kill them virus!</h1>
+		<h1 class="text-center p-3">Kill the virus!</h1>
 		<div class="container d-flex">
 			<!-- Game section -->
-			<div id="playing-field" class="col-8 bg-white black-border play-field">
+			<div id="playing-field" class="col-9 bg-white black-border play-field">
 				<div class="position" id="1"></div>
 				<div class="position" id="2"></div>
 				<div class="position" id="3"></div>
@@ -55,12 +55,12 @@
 			</div>
 
 			<!-- Score section -->
-			<div id="score-field" class="col-4 black-border">
+			<div id="score-field" class="col-3 black-border score-field">
 				<div id="scores" class="my-4">
 					<h4 id="user">Player Score:</h4>
 					<h4 id="opponent">Opponent Score:</h4>
 				</div>
-				<div id="time-stamp" class="my-5">	
+				<div id="time-stamp" class="my-4">	
 					<div id="userTime">
 						<p>Your Time</p>
 						<h5>00:00:00</h5>
@@ -71,10 +71,17 @@
 					</div>
 				</div>
 				<div id="surrender" class="text-center mb-3">
-					<button type="button" class="btn btn-danger px-3">Surrender</button>
+					<button onClick="window.location.reload()" type="button" class="btn btn-danger px-3">Surrender</button>
 				</div>
 			</div>	
 		</div>
+	</section>
+
+	<section id="endResults" class="waiting-screen hide">
+		<!-- Show user if they won or lost, Win = Green Color, Lose = Red Color -->
+		<h2 id="result"></h2>
+
+		<button onClick="window.location.reload()" type="button" id="cancel-queue" class="btn btn-primary px-3">Leave</button>
 	</section>
 
 	<!-- Bootstrap 5 script -->
