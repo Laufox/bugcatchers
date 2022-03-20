@@ -29,13 +29,14 @@ const handleUserJoined = function(username, callback) {
 
 	// Varuable to know if the game should start or not
 	let startGame = false;
-
+	debug('WQ at start: ', waitingQueue);
 	// If waiting queue is empty, create a new room
 	if (waitingQueue === 0) {
 		rooms.push({
 			// Set room id to numberOfRooms variable, then increase the numberOfRooms variable
 			room_id: numberOfRooms++,
 			// numberOfPlayers: 0, 			-- Might be needed later
+			// gameStatus: waiting|active|finished
 			// Object property to hold info about the users that is in the room
 			players: {},
 			roundsplayed: 0,
@@ -61,7 +62,7 @@ const handleUserJoined = function(username, callback) {
 
 	// Increase the waiting queue
 	waitingQueue++;
-
+	debug('WQ after increase: ', waitingQueue);
 	// If there is two clients in queue, prepare to start the game
 	if (waitingQueue === 2) {
 		debug('Client ready to start new game');

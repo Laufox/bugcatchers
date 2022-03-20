@@ -39,6 +39,7 @@ let timePassed = null;
 
 // Variable for the timer that will update and render timer to user
 let timer = null;
+let oTimer = null;
 
 // Variable for amount of milliseconds since 1 Jan 1970 at the point when the timer starts 
 let timeBeforeRound = null;
@@ -50,6 +51,7 @@ let randomizePositionEl = null;
 const stopTimer = () => {
 	// Stop the interval timer that prints time to user
 	clearInterval(timer);
+	clearInterval(oTimer);
 
 	// Calculate how long time it took for the player to click
 	timePassed = Date.now() - timeBeforeRound;
@@ -102,6 +104,11 @@ const startTimer = (virusPosition) => {
 		playerTimeEl.innerText = `${Math.floor(timePassed/1000)} : ${timePassed%1000}`;
 	}, 10 );
 
+	oTimer = setInterval( () => {
+		let oTime = Date.now() - timeBeforeRound;
+		document.querySelector('#opponentTime h5').innerText = `${Math.floor(oTime/1000)} : ${oTime%1000}`;
+	}, 10 );
+
 	// User virusPosition from server to pick wich div the virus gonna be at
 	randomizePositionEl = positionEl[virusPosition];
 	randomizePositionEl.classList.add('virus');
@@ -131,6 +138,9 @@ const gameRound = (timeToWait, virusPosition) => {
 }
 
 socket.on('game:print-round', (winner, players) => {
+	const opponent = Object.values(players).find( player => player.username !== username);
+	console.log(opponent);
+	document.querySelector('#opponentTime h5').innerText = `${Math.floor(opponent.previousReactionTime/1000)} : ${opponent.previousReactionTime%1000}`;
 	if (winner === username) {
 		console.log('I won');
 	} else {
