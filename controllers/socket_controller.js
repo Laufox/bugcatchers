@@ -36,7 +36,7 @@ const handleUserJoined = function(username, callback) {
 			// Set room id to numberOfRooms variable, then increase the numberOfRooms variable
 			room_id: numberOfRooms++,
 			// numberOfPlayers: 0, 			-- Might be needed later
-			// gameStatus: waiting|active|finished		-- Might be needed later
+			gameStatus: 'waiting',
 			// Object property to hold info about the users that is in the room
 			players: {},
 			// Number of rounds played in this room
@@ -70,6 +70,8 @@ const handleUserJoined = function(username, callback) {
 		debug('Client ready to start new game');
 		// Reset waiting queue variable
 		waitingQueue = 0;
+		// Set current room as active
+		currentRoom.gameStatus = 'ongoing',
 		// Set startGame variable to true
 		startGame = true;
 		// Call function to set set timer
@@ -105,8 +107,8 @@ const handleDisconnect = function() {
 	// Delete the player from the room
 	console.log("This player id", room.players[this.id].username);
 	delete room.players[this.id];
-
-	if (waitingQueue > 0) {
+	debug('WQ on DC: ', waitingQueue);
+	if (room.gameStatus === 'waiting') {
 		waitingQueue--;
 	}
 	
