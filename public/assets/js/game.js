@@ -51,7 +51,6 @@ let randomizePositionEl = null;
 const stopTimer = () => {
 	// Stop the interval timer that prints time to user
 	clearInterval(timer);
-	clearInterval(oTimer);
 
 	// Calculate how long time it took for the player to click
 	timePassed = Date.now() - timeBeforeRound;
@@ -68,6 +67,7 @@ const stopTimer = () => {
 	// Exempel på hur det skulle kunna vara, player1Score är då spelaren med id 0, player2Score är spelare med id 1. Den tar bara in information från socket_controller och jämför resultatet här och matar ut det i endScreen.
 
 	// Use in own funtion game:over, take in parameter userScore, opponentScore
+	/*
 	if(rounds === 10) {
 		waitingScreenEl.classList.add('hide');
 		gameScreenEl.classList.add('hide');
@@ -85,7 +85,7 @@ const stopTimer = () => {
 			userResults.innerHTML = `It's a tie! Result:${score}`// socket_controller ska skicka resultat hit
 		}
 	}
-
+	*/
 }
 
 
@@ -140,6 +140,7 @@ const gameRound = (timeToWait, virusPosition) => {
 socket.on('game:print-round', (winner, players) => {
 	const opponent = Object.values(players).find( player => player.username !== username);
 	console.log(opponent);
+	clearInterval(oTimer);
 	document.querySelector('#opponentTime h5').innerText = `${Math.floor(opponent.previousReactionTime/1000)} : ${opponent.previousReactionTime%1000}`;
 	if (winner === username) {
 		console.log('I won');

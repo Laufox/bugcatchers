@@ -127,12 +127,25 @@ const handleScore = function(reaction, player) {
 	} )
 
 	if (!foundNull) {
-		console.log("Null found");
+		console.log("Null not found");
 		const p1RecTime = Object.values(room.players)[0].previousReactionTime;
 		const p2recTime = Object.values(room.players)[1].previousReactionTime;
 		const winningPlayer = p1RecTime < p2recTime ? Object.values(room.players)[0].username : Object.values(room.players)[1].username;
 		calcTimeAndPosition();
+
 		io.in(room).emit('game:print-round', winningPlayer, room.players);
+
+		Object.values(room.players).forEach( (player) => {
+			player.previousReactionTime = null;
+		} );
+
+		room.roundsplayed++;
+
+		if(room.roundsplayed < 10) {
+			io.in(room).emit('game:start', timeToWait, virusPosition);
+		} else {
+			console.log(' Game finished ');
+		}
 	};
 	// Find two players in the room
 
