@@ -138,19 +138,20 @@ const gameRound = (timeToWait, virusPosition) => {
 }
 
 socket.on('game:print-round', (winner, players) => {
+	// Get the opponent player
 	const opponent = Object.values(players).find( player => player.username !== username);
 	console.log(opponent);
+	// Stop timer for opponent
 	clearInterval(oTimer);
+	// Set final time for opponent
 	document.querySelector('#opponentTime h5').innerText = `${Math.floor(opponent.previousReactionTime/1000)} : ${opponent.previousReactionTime%1000}`;
+	// --- Print round result based on if won or not ---
 	if (winner === username) {
 		console.log('I won');
 	} else {
 		console.log('I lost');
 	}
 });
-// PUT ROUND RESULT HERE
-// game:round-result take parameter winner, p2reaction
-// THEN PUT PRINT-RESULT
 
 // When another client connects
 socket.on('user:connected', (username) => {

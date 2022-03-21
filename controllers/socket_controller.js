@@ -36,9 +36,10 @@ const handleUserJoined = function(username, callback) {
 			// Set room id to numberOfRooms variable, then increase the numberOfRooms variable
 			room_id: numberOfRooms++,
 			// numberOfPlayers: 0, 			-- Might be needed later
-			// gameStatus: waiting|active|finished
+			// gameStatus: waiting|active|finished		-- Might be needed later
 			// Object property to hold info about the users that is in the room
 			players: {},
+			// Number of rounds played in this room
 			roundsplayed: 0,
 		});
 	}
@@ -51,6 +52,7 @@ const handleUserJoined = function(username, callback) {
 	this.join(currentRoom);
 	// Add clients username as property in the current room
 	// currentRoom.players[this.id] = username;
+	// Each player object in a room holds info aboiut their name, current score and their previous reaction time
 	currentRoom.players[this.id] = {
 		username,
 		points: 0,
@@ -116,34 +118,47 @@ const handleScore = function(reaction, player) {
 	// Find the room this socket is connected to
 	const room = rooms.find(lobby => lobby.players.hasOwnProperty(this.id));
 
+	// Get the players reaction time from parameter
 	room.players[this.id].previousReactionTime = reaction;
 
+	// Variable to know if both player in room are done
 	let foundNull = false;
 
+	// Check if other player finished
 	Object.values(room.players).forEach( (player) => {
 		if (player.previousReactionTime === null) {
 			foundNull = true;
 		}
 	} )
 
+	// If both players are done
 	if (!foundNull) {
-		console.log("Null not found");
-		const p1RecTime = Object.values(room.players)[0].previousReactionTime;
-		const p2recTime = Object.values(room.players)[1].previousReactionTime;
-		const winningPlayer = p1RecTime < p2recTime ? Object.values(room.players)[0].username : Object.values(room.players)[1].username;
-		calcTimeAndPosition();
 
+		// Single out each player
+		const playerOne = Object.values(room.players)[0];
+		const playerTwo = Object.values(room.players)[1];
+
+		// Get winning name from comparing both reaction times
+		const winningPlayer = playerOne.previousReactionTime < playerTwo.previousReactionTime ? playerOne.username : playerTwo.username;
+
+		// Send result to all players in room
 		io.in(room).emit('game:print-round', winningPlayer, room.players);
 
-		Object.values(room.players).forEach( (player) => {
-			player.previousReactionTime = null;
-		} );
+		// Set both players previous reaction time to null for future rounds
+		playerOne.previousReactionTime = null;
+		playerTwo.previousReactionTime = null;
 
+		// Increase number of rounds played in game room
 		room.roundsplayed++;
 
+		// If Rounds played is less than 10, start a new round. Otherwise finish game
 		if(room.roundsplayed < 10) {
+			// Calculate a new random tim ena position
+			calcTimeAndPosition();
+			// Start new round
 			io.in(room).emit('game:start', timeToWait, virusPosition);
 		} else {
+			// --- Send final result to clients ---
 			console.log(' Game finished ');
 		}
 	};
@@ -152,11 +167,11 @@ const handleScore = function(reaction, player) {
 	// Compare reaction time for the two players
 	// Only compare and emit if two reactiontimes is in room
 
-	const winningPlayer = room.players[this.id]
-	debug(`Client ${winningPlayer} won this round`);
+	//const winningPlayer = room.players[this.id]
+	//debug(`Client ${winningPlayer} won this round`);
 
 	// Emit with arguments winner true/false or name of winner and both reaction times
-	io.in(room).emit('game:round-result',)
+	// io.in(room).emit('game:round-result',)
 	// If 10 rounds played, emit to game:end
 }
 
