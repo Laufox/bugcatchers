@@ -66,7 +66,7 @@ const stopTimer = () => {
 
 	// Exempel på hur det skulle kunna vara, player1Score är då spelaren med id 0, player2Score är spelare med id 1. Den tar bara in information från socket_controller och jämför resultatet här och matar ut det i endScreen.
 
-	// Use in own funtion game:over, take in parameter userScore, opponentScore
+	// Använd i egen funktion när spelet är slut
 	/*
 	if(rounds === 10) {
 		waitingScreenEl.classList.add('hide');

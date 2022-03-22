@@ -167,14 +167,10 @@ const handleScore = function(reaction, player) {
 	// Find two players in the room
 
 	// Compare reaction time for the two players
-	// Only compare and emit if two reactiontimes is in room
 
 	//const winningPlayer = room.players[this.id]
 	//debug(`Client ${winningPlayer} won this round`);
 
-	// Emit with arguments winner true/false or name of winner and both reaction times
-	// io.in(room).emit('game:round-result',)
-	// If 10 rounds played, emit to game:end
 }
 
 
