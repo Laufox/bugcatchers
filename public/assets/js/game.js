@@ -65,25 +65,6 @@ const stopTimer = () => {
 	// Give time to server
 	socket.emit('game:round-result', timePassed, username);
 
-	if(rounds === 10) {
-		waitingScreenEl.classList.add('hide');
-		gameScreenEl.classList.add('hide');
-		endScreenEl.classList.remove('hide');
-
-		// Player1Score och Player2Score är bara placeholders!!
-		if(player1Score > player2Score) {
-			userResults.innerHTML = `Result:${score}`// socket_controller ska skicka resultat hit
-			userResults.classList.add('winResult');
-
-		} else if (player1Score > player2Score) {
-			userResults.innerHTML = `Result: ${score}`// socket_controller ska skicka resultat hit
-			userResults.classList.add('loseResult');
-
-		} else if(player1Score == player2Score) {
-			userResults.innerHTML = `It's a tie! Result:${score}`// socket_controller ska skicka resultat hit
-		}
-	}
-	
 }
 
 
@@ -280,3 +261,23 @@ positionEl.forEach(position => {
 		}
 	})
 });
+
+const GameOver = () => {
+
+	waitingScreenEl.classList.add('hide');
+	gameScreenEl.classList.add('hide');
+	endScreenEl.classList.remove('hide');
+
+	// Player1Score och Player2Score är bara placeholders!!
+	if(player1Score > player2Score) {
+		userResults.innerHTML = `Result:${score}`// socket_controller ska skicka resultat hit
+		userResults.classList.add('winResult');
+
+	} else if (player1Score > player2Score) {
+		userResults.innerHTML = `Result: ${score}`// socket_controller ska skicka resultat hit
+		userResults.classList.add('loseResult');
+
+	} else if(player1Score == player2Score) {
+		userResults.innerHTML = `It's a tie! Result:${score}`// socket_controller ska skicka resultat hit
+	}
+}
