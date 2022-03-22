@@ -20,6 +20,7 @@ const playerTimeEl = document.querySelector('#userTime h5');
 
 // Username to identify client
 let username = null;
+let opponent = null;
 let room = null;
 
 // Score
@@ -133,28 +134,48 @@ const gameRound = (timeToWait, virusPosition) => {
 
 // When another client connects
 socket.on('user:connected', (username) => {
-	//console.log(`${username} has connected`);
+	console.log(`${username} has connected`);
 	// When a game is ready to start
 	
 });
 
 // When a game/round is ready to start
-socket.on('game:start', (timeToWait, virusPosition) => {
+socket.on('game:start', (timeToWait, virusPosition, players) => {
 	console.log('Opponent found, game will begin');
 	// Hide waiting screen and display game screen
 	waitingScreenEl.classList.add('hide');
 	gameScreenEl.classList.remove('hide');
+
+	
+	playerNames(players);
+
+
 	// Start a new round with time and position given by server
 	gameRound(timeToWait, virusPosition);
 });
 
+const playerNames = (players) => {
+	username = nameFormEl.username.value;
+
+	const playerList = Object.values(players)
+	console.log(playerList.indexOf(username));
+	const player1 = playerList.indexOf(username);
+	playerList.splice(player1, 1);
+
+	console.log(playerList);
+
+	opponent = playerList;
+
+	opponentScoreEl.innerText = `${opponent} Score: ${score}`
+}
 
 // Event listener for when a user submits the name form
 nameFormEl.addEventListener('submit', (e) => {
 	e.preventDefault();
-
+ 
 	// Take username from the form submitted
 	username = nameFormEl.username.value;
+	// opponent = !currentRoom.players[this.id];
 	
 	// Inform the socket that client wants to join the game
 	socket.emit('user:joined', username, (status) => {
@@ -163,6 +184,11 @@ nameFormEl.addEventListener('submit', (e) => {
 			console.log('Welcome ', username);
 			// Hide start-screen element
 			startScreenEl.classList.add('hide');
+
+			console.log(status.players);
+
+			playerNames(status.players);
+
 			// Show waiting-screen element
 			waitingScreenEl.classList.remove('hide');
 			// Set room client is part of to room id given back by server
@@ -176,6 +202,9 @@ nameFormEl.addEventListener('submit', (e) => {
 			}
 		}
 	})
+
+	// opponentScoreEl.innerText = `${opponent} Score:`
+	userScoreEl.innerText = `${username} Score:`
 });
 
 // Function to random position the viruses
@@ -214,8 +243,8 @@ positionEl.forEach(position => {
 			score++
 
 			// add to score needs to be fixed
-			userScoreEl.innerHTML = `Player Score: ${score}`
-			console.log("Player Score:",score);
+			userScoreEl.innerText = `${username} Score: ${score}`
+			console.log(`${username} Score:`,score);
 
 			// reset the target
 			target = null
