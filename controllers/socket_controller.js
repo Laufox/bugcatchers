@@ -160,7 +160,7 @@ const handleScore = function(reaction, player) {
 			// Calculate a new random tim ena position
 			calcTimeAndPosition();
 			// Start new round
-			io.in(room).emit('game:start', timeToWait, virusPosition);
+			io.in(room).emit('game:start', timeToWait, virusPosition, room.players);
 		} else {
 			// --- Send final result to clients ---
 			console.log(' Game finished ');

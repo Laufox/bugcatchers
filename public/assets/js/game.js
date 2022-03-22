@@ -147,7 +147,7 @@ socket.on('game:start', (timeToWait, virusPosition, players) => {
 	gameScreenEl.classList.remove('hide');
 
 	
-	// playerNames(players);
+	playerNames(players);
 
 
 	// Start a new round with time and position given by server
