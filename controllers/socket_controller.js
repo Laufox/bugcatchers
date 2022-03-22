@@ -115,7 +115,7 @@ const handleScore = function(reaction, player, score) {
 	// Find two players in the room
 
 	// Compare reaction time for the two players
-
+    
 	const winningPlayer = room.players[this.id]
 	debug(`Client ${winningPlayer} won this round`);
 

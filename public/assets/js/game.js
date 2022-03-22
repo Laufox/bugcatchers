@@ -63,13 +63,12 @@ const stopTimer = () => {
 	// Give time to server
 	socket.emit('game:round-result', timePassed, username);
 
-	// Exempel på hur det skulle kunna vara, player1Score är då spelaren med id 0, player2Score är spelare med id 1. Den tar bara in information från socket_controller och jämför resultatet här och matar ut det i endScreen.
-
 	if(rounds === 10) {
 		waitingScreenEl.classList.add('hide');
 		gameScreenEl.classList.add('hide');
 		endScreenEl.classList.remove('hide');
 
+		// Player1Score och Player2Score är bara placeholders!!
 		if(player1Score > player2Score) {
 			userResults.innerHTML = `Result:${score}`// socket_controller ska skicka resultat hit
 			userResults.classList.add('winResult');
