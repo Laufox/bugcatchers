@@ -68,6 +68,7 @@ const handleUserJoined = function(username, callback) {
 	// If there is two clients in queue, prepare to start the game
 	if (waitingQueue === 2) {
 		debug('Client ready to start new game');
+		debug(currentRoom.players);
 		// Reset waiting queue variable
 		waitingQueue = 0;
 		// Set current room as active
@@ -77,7 +78,7 @@ const handleUserJoined = function(username, callback) {
 		// Call function to set set timer
 		calcTimeAndPosition();
 		// Tell the other clients in the room that a new game should start
-		this.broadcast.to(currentRoom).emit('game:start', timeToWait, virusPosition);
+		this.broadcast.to(currentRoom).emit('game:start', timeToWait, virusPosition, currentRoom.players);
 	}
 
 	// Let everyone know a client has connected
@@ -87,6 +88,7 @@ const handleUserJoined = function(username, callback) {
 	callback({
 		success: true,
 		room: currentRoom.room_id,
+		players: currentRoom.players,
 		startGame,
 		timeToWait,
 		virusPosition,

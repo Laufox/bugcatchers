@@ -20,6 +20,7 @@ const playerTimeEl = document.querySelector('#userTime h5');
 
 // Username to identify client
 let username = null;
+let opponent = null;
 let room = null;
 
 // Score
@@ -64,15 +65,12 @@ const stopTimer = () => {
 	// Give time to server
 	socket.emit('game:round-result', timePassed, username);
 
-	// Exempel på hur det skulle kunna vara, player1Score är då spelaren med id 0, player2Score är spelare med id 1. Den tar bara in information från socket_controller och jämför resultatet här och matar ut det i endScreen.
-
-	// Använd i egen funktion när spelet är slut
-	/*
 	if(rounds === 10) {
 		waitingScreenEl.classList.add('hide');
 		gameScreenEl.classList.add('hide');
 		endScreenEl.classList.remove('hide');
 
+		// Player1Score och Player2Score är bara placeholders!!
 		if(player1Score > player2Score) {
 			userResults.innerHTML = `Result:${score}`// socket_controller ska skicka resultat hit
 			userResults.classList.add('winResult');
@@ -85,7 +83,7 @@ const stopTimer = () => {
 			userResults.innerHTML = `It's a tie! Result:${score}`// socket_controller ska skicka resultat hit
 		}
 	}
-	*/
+	
 }
 
 
@@ -155,28 +153,56 @@ socket.on('game:print-round', (winner, players) => {
 
 // When another client connects
 socket.on('user:connected', (username) => {
-	//console.log(`${username} has connected`);
+	console.log(`${username} has connected`);
 	// When a game is ready to start
 	
 });
 
 // When a game/round is ready to start
-socket.on('game:start', (timeToWait, virusPosition) => {
+socket.on('game:start', (timeToWait, virusPosition, players) => {
 	console.log('Opponent found, game will begin');
 	// Hide waiting screen and display game screen
 	waitingScreenEl.classList.add('hide');
 	gameScreenEl.classList.remove('hide');
+
+	
+	// playerNames(players);
+
+
 	// Start a new round with time and position given by server
 	gameRound(timeToWait, virusPosition);
 });
 
+const playerNames = (players) => {
+	username = nameFormEl.username.value;
+	console.log('Players: ', players);
+
+	const playerList = Object.values(players);
+	const playerNames = [];
+
+	playerList.forEach( (player) => {
+		playerNames.push(player.username);
+	} );
+	
+	console.log('Playerlist: ', playerNames);
+	console.log(playerNames.indexOf(username));
+	const player1 = playerNames.indexOf(username);
+	playerNames.splice(player1, 1);
+
+	console.log(playerNames);
+
+	opponent = playerNames;
+
+	opponentScoreEl.innerText = `${opponent} Score: ${score}`
+}
 
 // Event listener for when a user submits the name form
 nameFormEl.addEventListener('submit', (e) => {
 	e.preventDefault();
-
+ 
 	// Take username from the form submitted
 	username = nameFormEl.username.value;
+	// opponent = !currentRoom.players[this.id];
 	
 	// Inform the socket that client wants to join the game
 	socket.emit('user:joined', username, (status) => {
@@ -185,6 +211,9 @@ nameFormEl.addEventListener('submit', (e) => {
 			console.log('Welcome ', username);
 			// Hide start-screen element
 			startScreenEl.classList.add('hide');
+
+			console.log(status.players);
+
 			// Show waiting-screen element
 			waitingScreenEl.classList.remove('hide');
 			// Set room client is part of to room id given back by server
@@ -194,10 +223,14 @@ nameFormEl.addEventListener('submit', (e) => {
 				console.log("Game will begin");
 				waitingScreenEl.classList.add('hide');
 				gameScreenEl.classList.remove('hide');
+				playerNames(status.players);
 				gameRound(status.timeToWait, status.virusPosition);
 			}
 		}
 	})
+
+	// opponentScoreEl.innerText = `${opponent} Score:`
+	userScoreEl.innerText = `${username} Score:`
 });
 
 // Function to random position the viruses
@@ -236,8 +269,8 @@ positionEl.forEach(position => {
 			score++
 
 			// add to score needs to be fixed
-			userScoreEl.innerHTML = `Player Score: ${score}`
-			console.log("Player Score:",score);
+			userScoreEl.innerText = `${username} Score: ${score}`
+			console.log(`${username} Score:`,score);
 
 			// reset the target
 			target = null
