@@ -142,8 +142,14 @@ const handleScore = function(reaction, player) {
 		const playerOne = Object.values(room.players)[0];
 		const playerTwo = Object.values(room.players)[1];
 
-		// Get winning name from comparing both reaction times
-		const winningPlayer = playerOne.previousReactionTime < playerTwo.previousReactionTime ? playerOne.username : playerTwo.username;
+		// Get winning name from comparing both reaction times, and increase their score
+		if (playerOne.previousReactionTime < playerTwo.previousReactionTime) {
+			winningPlayer = playerOne.username;
+			playerOne.points++;
+		} else {
+			winningPlayer = playerTwo.username;
+			playerTwo.points++;
+		}
 
 		// Send result to all players in room
 		io.in(room).emit('game:print-round', winningPlayer, room.players);
@@ -162,16 +168,10 @@ const handleScore = function(reaction, player) {
 			// Start new round
 			io.in(room).emit('game:start', timeToWait, virusPosition, room.players);
 		} else {
-			// --- Send final result to clients ---
-			console.log(' Game finished ');
+			// Send final result to clients
+			io.in(room).emit('game:over', playerOne, playerTwo);
 		}
 	};
-	// Find two players in the room
-
-	// Compare reaction time for the two players
-
-	//const winningPlayer = room.players[this.id]
-	//debug(`Client ${winningPlayer} won this round`);
 
 }
 

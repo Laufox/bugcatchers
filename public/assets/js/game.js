@@ -304,22 +304,25 @@ nameFormEl.addEventListener('submit', (e) => {
 // 	})
 // });
 
-const GameOver = () => {
-
+socket.on('game:over', (playerOne, playerTwo) => {
+	// Hide other sections and how end-screen section
 	waitingScreenEl.classList.add('hide');
 	gameScreenEl.classList.add('hide');
 	endScreenEl.classList.remove('hide');
 
-	// Player1Score och Player2Score är bara placeholders!!
-	if(player1Score > player2Score) {
-		userResults.innerHTML = `Result:${score}`// socket_controller ska skicka resultat hit
+	// Find out which of the players from params that this client represent
+	const self = playerOne.username === username ? playerOne : playerTwo;
+	// Find out which of the players from params that other client represent
+	const opponent = playerOne.username === username ? playerTwo : playerOne;
+	
+	// Compare client and opponent score to find out who won
+	if(self.points > opponent.points) {
+		userResults.innerHTML = `You won! Score: ${self.points} - ${opponent.points}`;
 		userResults.classList.add('winResult');
-
-	} else if (player1Score > player2Score) {
-		userResults.innerHTML = `Result: ${score}`// socket_controller ska skicka resultat hit
+	} else if (opponent.points > self.points) {
+		userResults.innerHTML = `You lost! Score: ${self.points} - ${opponent.points}`;
 		userResults.classList.add('loseResult');
-
-	} else if(player1Score == player2Score) {
-		userResults.innerHTML = `It's a tie! Result:${score}`// socket_controller ska skicka resultat hit
+	} else if(self.points === opponent.points) {
+		userResults.innerHTML = `It's a tie! Score: ${self.points} - ${opponent.points}`;
 	}
-}
+});
