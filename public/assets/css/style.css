@@ -66,3 +66,13 @@
 .loseResult {
 	color: red;
 }
+
+#round-countdown {
+	width: 100%;
+	height: 100%;
+	background-color: rgba(100,100,100,0.5);
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	font-size: 2rem;
+}

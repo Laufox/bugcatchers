@@ -48,6 +48,8 @@ let timeBeforeRound = null;
 // Div where virus will display each round
 let randomizePositionEl = null;
 
+let roundCountdownInterval = null;
+
 // Funtion to stop timer and calculate player click time
 const stopTimer = () => {
 	// Stop the interval timer that prints time to user
@@ -72,6 +74,7 @@ const startTimer = (virusPosition) => {
 	console.log("Wait time over, lets start!");
 	console.log("Round", rounds)
 
+	
 	// Reset user click time
 	timePassed = 0;
 	// Get the amount of milliseconds since 1 Jan 1970
@@ -102,6 +105,25 @@ const startTimer = (virusPosition) => {
 	
 }
 
+const cdEl = document.querySelector('#round-countdown');
+const cdSpanEl = document.querySelector('#round-countdown span');
+let countdown = 3;
+const countdownBR = (timeToWait, virusPosition) => {
+	countdown--;
+	cdSpanEl.innerText = countdown;
+
+	if (countdown === 0) {
+
+		clearInterval(roundCountdownInterval);
+		cdEl.classList.add('hide');
+		countdown = 3;
+		cdSpanEl.innerText = countdown;
+		// Wait before showing user which square to click
+		setTimeout(startTimer, timeToWait, virusPosition);
+	
+	}
+}
+
 // Function to start up a new round
 const gameRound = (timeToWait, virusPosition) => {
 	console.log("Starting timer " + timeToWait + " for virus on position " + virusPosition);
@@ -111,8 +133,8 @@ const gameRound = (timeToWait, virusPosition) => {
 		position.classList.remove('virus');
 	});
 
-	// Wait before showing user which square to click
-	setTimeout(startTimer, timeToWait, virusPosition);
+	cdEl.classList.remove('hide');
+	roundCountdownInterval = setInterval(countdownBR, 1000, timeToWait, virusPosition);
 	
 }
 
