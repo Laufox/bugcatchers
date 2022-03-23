@@ -17,7 +17,6 @@ let waitingQueue = 0;
 let timeToWait = 0;
 let virusPosition = null;
 let currentRoom;
-let autoWin;
 
 // Set time to wait to a random number between 0 and 5000
 const calcTimeAndPosition = () => {	
@@ -93,7 +92,6 @@ const handleUserJoined = function(username, callback) {
 		startGame,
 		timeToWait,
 		virusPosition,
-		autoWin
 	});
 }
 
@@ -103,17 +101,15 @@ const handleDisconnect = function() {
 
 	// Find the room this socket is connected to
 	const room = rooms.find(lobby => lobby.players.hasOwnProperty(this.id));
-
 	//If socket is not in a room, do nothing and return
 	if(!room) {
 		return;
 	}
 	// Delete the player from the room
-	console.log("Player id:", room.players[this.id].username);
+	console.log("Player Username:", room.players[this.id].username);
 	delete room.players[this.id];
 
 	console.log("Other player automatically wins", room.players);
-	autoWin = room.players.username;
 
 	debug('WQ on DC: ', waitingQueue);
 	if (room.gameStatus === 'waiting') {
@@ -127,7 +123,7 @@ const handleDisconnect = function() {
 const handleScore = function(reaction, player) {
 	// Find the room this socket is connected to
 	const room = rooms.find(lobby => lobby.players.hasOwnProperty(this.id));
-
+	
 	// Get the players reaction time from parameter
 	room.players[this.id].previousReactionTime = reaction;
 
@@ -169,7 +165,6 @@ const handleScore = function(reaction, player) {
 			} else {
 				// --- Send final result to clients ---
 				console.log(' Game finished ');
-				io.emit('receive-results', playerOne, playerTwo)
 			}
 		}	
 	// Find two players in the room

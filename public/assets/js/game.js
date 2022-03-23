@@ -26,7 +26,6 @@ let username = null;
 let opponent = null;
 let room = null;
 let playerDisc = false;
-let autoWin;
 
 // Score
 let score = 0;
@@ -155,7 +154,7 @@ const gameRound = (timeToWait, virusPosition) => {
 socket.on('game:print-round', (winner, players) => {
 	// Get the opponent player
 	const opponent = Object.values(players).find( player => player.username !== username);
-	console.log(opponent);
+	console.log("Opponent",opponent);
 	// Stop timer for opponent
 	clearInterval(oTimer);
 	// Set final time for opponent
@@ -175,18 +174,24 @@ socket.on('user:connected', (username) => {
 	
 });
 
-socket.on('disconnect', (autoWin) => {
+
+socket.on('disconnect', () => {
 	stopTimer();
 	playerDisc = true;
-	if(playerDisc) {
-			waitingScreenEl.classList.add('hide');
-			gameScreenEl.classList.add('hide');
-			endScreenEl.classList.remove('hide');
-
-			winner.innerHTML = `${autoWin.username} wins!`
-			userResults.innerHTML = `Opponent Disconnected`
-		}
+	autoWin(playerDisc);
 });
+
+
+const autoWin = () => {
+	if(playerDisc) {
+		waitingScreenEl.classList.add('hide');
+		gameScreenEl.classList.add('hide');
+		endScreenEl.classList.remove('hide');
+
+		winner.innerHTML = `You win!`
+		userResults.innerHTML = `Opponent disconnected`
+	}
+}
 
 // When a game/round is ready to start
 socket.on('game:start', (timeToWait, virusPosition, players) => {
@@ -214,7 +219,7 @@ const playerNames = (players) => {
 		playerNames.push(player.username);
 	} );
 	
-	console.log('Playerlist: ', playerNames);
+	console.log('List of players: ', playerNames);
 	console.log(playerNames.indexOf(username));
 	const player1 = playerNames.indexOf(username);
 	playerNames.splice(player1, 1);
@@ -223,7 +228,7 @@ const playerNames = (players) => {
 
 	opponent = playerNames;
 
-	opponentScoreEl.innerText = `${opponent} Score: ${score}`
+	opponentScoreEl.innerText = `${opponent} Score:`
 }
 
 // Event listener for when a user submits the name form
