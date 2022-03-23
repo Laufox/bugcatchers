@@ -81,7 +81,6 @@ const stopTimer = () => {
 const startTimer = (virusPosition) => {
 	console.log("Wait time over, lets start!");
 	console.log("Round", rounds)
-
 	
 	// Reset user click time
 	timePassed = 0;
@@ -94,6 +93,7 @@ const startTimer = (virusPosition) => {
 		playerTimeEl.innerText = `${Math.floor(timePassed/1000)} : ${timePassed%1000}`;
 	}, 10 );
 
+	// Display estimated time for opponent during round
 	oTimer = setInterval( () => {
 		let oTime = Date.now() - timeBeforeRound;
 		document.querySelector('#opponentTime h5').innerText = `${Math.floor(oTime/1000)} : ${oTime%1000}`;
@@ -177,20 +177,13 @@ socket.on('game:print-round', (winner, players) => {
 	// Set final time for opponent
 	document.querySelector('#opponentTime h5').innerText = `${Math.floor(opponent.previousReactionTime/1000)} : ${opponent.previousReactionTime%1000}`;
 	
-	// --- Print round result based on if won or not ---
+	// Increase score for the player that won
 	if (winner === username) {
 		userScoreEl.innerText = `${username} score: ${++userScore}`;
 	} else {
 		opponentScoreEl.innerText = `${opponent.username} score: ${++opponentScore}`;
 	}
 });
-
-
-// When another client connects
-socket.on('user:connected', (username) => {
-	console.log(`${username} has connected`);
-});
-
 
 // When a game/round is ready to start
 socket.on('game:start', (timeToWait, virusPosition, players) => {
@@ -200,6 +193,7 @@ socket.on('game:start', (timeToWait, virusPosition, players) => {
 	waitingScreenEl.classList.add('hide');
 	gameScreenEl.classList.remove('hide');
 
+	// Update the score
 	userScoreEl.innerText = `${username} score: ${userScore}`;
 	opponentScoreEl.innerText = `${Object.values(players).find( player => player.username !== username).username} score: ${opponentScore}`;
 	
@@ -262,6 +256,7 @@ nameFormEl.addEventListener('submit', (e) => {
 				console.log("Game will begin");
 				waitingScreenEl.classList.add('hide');
 				gameScreenEl.classList.remove('hide');
+				// Initialize score-table for player and opponent
 				userScoreEl.innerText = `${username} score: ${userScore}`;
 				opponentScoreEl.innerText = `${Object.values(status.players).find( player => player.username !== username).username} score: ${opponentScore}`;
 				playerNames(status.players);
@@ -270,8 +265,6 @@ nameFormEl.addEventListener('submit', (e) => {
 		}
 	})
 
-	// opponentScoreEl.innerText = `${opponent} Score:`
-	
 });
 
 // Destroy the virus function
