@@ -20,7 +20,7 @@ let currentRoom;
 
 // Set time to wait to a random number between 0 and 5000
 const calcTimeAndPosition = () => {	
-	timeToWait = Math.round(Math.random()*5000);
+	timeToWait = Math.round(Math.random()*4000 + 300);
 	virusPosition = Math.floor(Math.random() * 9);
 } 
 
@@ -160,7 +160,7 @@ const handleScore = function(reaction, player) {
 			// Calculate a new random tim ena position
 			calcTimeAndPosition();
 			// Start new round
-			io.in(room).emit('game:start', timeToWait, virusPosition);
+			io.in(room).emit('game:start', timeToWait, virusPosition, room.players);
 		} else {
 			// --- Send final result to clients ---
 			console.log(' Game finished ');
