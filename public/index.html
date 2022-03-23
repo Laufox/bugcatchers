@@ -17,20 +17,21 @@
 <body>
 
 	<!-- Section for the startup screen -->
-	<section id="start-screen" class="start-screen">		<!--dont forget to remove hide class-->
+	<section id="start-screen" class="start-screen">
 		<h1>Bugcatchers: Kill the virus</h1>
 
 		<!-- Form to enter a username and enter the game -->
-		<form id="name-form" class="input-form">
-			<label for="username">Your name:</label>
-			<input type="text" id="username" required autofocus>
+		<form id="name-form" class="input-form mb-3">
+			<input type="text" id="username" class="form-control form-control-lg" placeholder="Your name" required autofocus>
 			<button type="submit" class="btn btn-primary">Enter queue</button>
 		</form>
 	</section>
 
 	<!-- Section for the waiting screen -->
 	<section id="waiting-screen" class="waiting-screen hide">
-		<h2>Waiting for opponent</h2>
+		<marquee behavior="loop" direction="left" scrollamount="10">
+			<h2>Waiting for opponent..</h2>
+		</marquee>
 
 		<!-- Button to exit the queue -->
 		<button onClick="window.location.reload()" type="button" class="btn btn-primary px-3">Cancel</button>
@@ -38,24 +39,29 @@
 	</section>
 
 	<!-- Section for the game itself -->
-	<section id="game-screen" class="game-screen hide">	<!-- dont forget to add hide-->
+	<section id="game-screen" class="game-screen hide">
 		<h1 class="text-center p-3">Kill the virus!</h1>
 		<div class="container d-flex">
-			<!-- Game section -->
+			
+			<!-- Game field -->
 			<div id="playing-field" class="col-9 bg-white black-border play-field">
-				<div id="round-countdown" class="container hide">Next round in: <span>3</span></div>
-				<div class="position" id="1"></div>
-				<div class="position" id="2"></div>
-				<div class="position" id="3"></div>
-				<div class="position" id="4"></div>
-				<div class="position" id="5"></div>
-				<div class="position" id="6"></div>
-				<div class="position" id="7"></div>
-				<div class="position" id="8"></div>
-				<div class="position" id="9"></div>
+				<div id="round-countdown" class="container hide">
+					Next round in: <span>3</span>
+				</div>
+				
+				<!-- Virus play-field (grid) -->
+				<div class="position hide" id="1"></div>
+				<div class="position hide" id="2"></div>
+				<div class="position hide" id="3"></div>
+				<div class="position hide" id="4"></div>
+				<div class="position hide" id="5"></div>
+				<div class="position hide" id="6"></div>
+				<div class="position hide" id="7"></div>
+				<div class="position hide" id="8"></div>
+				<div class="position hide" id="9"></div>
 			</div>
 
-			<!-- Score section -->
+			<!-- Score field -->
 			<div id="score-field" class="col-3 black-border score-field">
 				<div id="scores" class="my-4">
 					<h4 id="user">Player score: 0</h4>
@@ -71,14 +77,21 @@
 						<h5>00:00:00</h5>
 					</div>
 				</div>
-				<div id="surrender" class="text-center mb-3">
-					<button onClick="window.location.reload()" type="button" class="btn btn-danger px-3">Surrender</button>
+
+				<!-- Surrender button -->
+				<div id="surrender" class="text-center">
+					<button onClick="window.location.reload()" type="button" class="btn btn-danger px-3">
+						<span>Surrender</span>
+					</button>
 				</div>
-			</div>	
+			</div>
+
 		</div>
 	</section>
 
+	<!-- Result section -->
 	<section id="endResults" class="waiting-screen hide">
+		
 		<!-- Show user if they won or lost, Win = Green Color, Lose = Red Color -->
 		<h2 id="result"></h2>
 

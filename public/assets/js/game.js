@@ -10,15 +10,14 @@ const userResults = document.querySelector('#endResults h2');
 const playerName = document.querySelector('#user')
 const opponentName = document.querySelector('#opponent')
 const positionEl = document.querySelectorAll('.position');
-const virusEl = document.querySelector('.virus');	// might not need this
 const timestampEl = document.querySelector('#time-stamp');
 const userScoreEl = document.querySelector('#user');
 const opponentScoreEl = document.querySelector('#opponent');
-// const scoreEl = document.querySelector('#scores');
 const gameScreenEl = document.querySelector('#game-screen');
 const playerTimeEl = document.querySelector('#userTime h5');
 const roundCountdownEl = document.querySelector('#round-countdown');
 const roundCountdownSpanEl = document.querySelector('#round-countdown span');
+const virusFieldEl = document.querySelector('#virus-field');
 
 // Username to identify client
 let username = null;
@@ -50,8 +49,11 @@ let timeBeforeRound = null;
 
 // Div where virus will display each round
 let randomizePositionEl = null;
-
 let roundCountdownInterval = null;
+
+// Variable to count down before a round starts
+let countdown = 3;
+
 
 // Funtion to stop timer and calculate player click time
 const stopTimer = () => {
@@ -73,8 +75,7 @@ const stopTimer = () => {
 
 	// Give time to server
 	socket.emit('game:round-result', timePassed, username);
-
-}
+};
 
 
 const startTimer = (virusPosition) => {
@@ -110,10 +111,8 @@ const startTimer = (virusPosition) => {
 	rounds++;
 	console.log("Rounds played:",rounds)
 	
-}
+};
 
-// Variable to count down before a round starts
-let countdown = 3;
 
 // Function to display countdown to user before starting a new round
 const countdownBR = (timeToWait, virusPosition) => {
@@ -127,8 +126,15 @@ const countdownBR = (timeToWait, virusPosition) => {
 
 		// Stop countdown interval timer
 		clearInterval(roundCountdownInterval);
+
 		// Hide countdown display
 		roundCountdownEl.classList.add('hide');
+
+		// Show virus field
+		positionEl.forEach(position => {
+			position.classList.remove('hide');
+		});
+
 		// Reset countdown variable for future rounds
 		countdown = 3;
 		roundCountdownSpanEl.innerText = countdown;
@@ -137,7 +143,8 @@ const countdownBR = (timeToWait, virusPosition) => {
 		setTimeout(startTimer, timeToWait, virusPosition);
 	
 	}
-}
+};
+
 
 // Function to start up a new round
 const gameRound = (timeToWait, virusPosition) => {
@@ -151,17 +158,25 @@ const gameRound = (timeToWait, virusPosition) => {
 	// Start countdown before next round starts
 	roundCountdownEl.classList.remove('hide');
 	roundCountdownInterval = setInterval(countdownBR, 1000, timeToWait, virusPosition);
-	
-}
+
+	// Hide virus field
+	positionEl.forEach(position => {
+		position.classList.add('hide');
+	});
+};
+
 
 socket.on('game:print-round', (winner, players) => {
 	// Get the opponent player
 	const opponent = Object.values(players).find( player => player.username !== username);
 	console.log(opponent);
+
 	// Stop timer for opponent
 	clearInterval(oTimer);
+
 	// Set final time for opponent
 	document.querySelector('#opponentTime h5').innerText = `${Math.floor(opponent.previousReactionTime/1000)} : ${opponent.previousReactionTime%1000}`;
+	
 	// --- Print round result based on if won or not ---
 	if (winner === username) {
 		userScoreEl.innerText = `${username} score: ${++userScore}`;
@@ -170,16 +185,17 @@ socket.on('game:print-round', (winner, players) => {
 	}
 });
 
+
 // When another client connects
 socket.on('user:connected', (username) => {
 	console.log(`${username} has connected`);
-	// When a game is ready to start
-	
 });
+
 
 // When a game/round is ready to start
 socket.on('game:start', (timeToWait, virusPosition, players) => {
 	console.log('Opponent found, game will begin');
+
 	// Hide waiting screen and display game screen
 	waitingScreenEl.classList.add('hide');
 	gameScreenEl.classList.remove('hide');
@@ -189,10 +205,10 @@ socket.on('game:start', (timeToWait, virusPosition, players) => {
 	
 	playerNames(players);
 
-
 	// Start a new round with time and position given by server
 	gameRound(timeToWait, virusPosition);
 });
+
 
 const playerNames = (players) => {
 	username = nameFormEl.username.value;
@@ -223,13 +239,13 @@ nameFormEl.addEventListener('submit', (e) => {
  
 	// Take username from the form submitted
 	username = nameFormEl.username.value;
-	// opponent = !currentRoom.players[this.id];
 	
 	// Inform the socket that client wants to join the game
 	socket.emit('user:joined', username, (status) => {
 		// If the server returns a successful callback
 		if (status.success) {
 			console.log('Welcome ', username);
+
 			// Hide start-screen element
 			startScreenEl.classList.add('hide');
 
@@ -237,8 +253,10 @@ nameFormEl.addEventListener('submit', (e) => {
 
 			// Show waiting-screen element
 			waitingScreenEl.classList.remove('hide');
+
 			// Set room client is part of to room id given back by server
 			room = status.room;
+
 			// If the startGame property from callback is true, start new game 
 			if (status.startGame) {
 				console.log("Game will begin");
@@ -256,56 +274,23 @@ nameFormEl.addEventListener('submit', (e) => {
 	
 });
 
-// Function to random position the viruses
-// const randomPosition = () => {
-// 	positionEl.forEach(position => {
-// 		position.classList.remove('virus');
-// 	});
-
-// 	// randomize the position for the viruses
-// 	let randomizePosition = positionEl[Math.floor(Math.random() * 9)]
-// 	randomizePosition.classList.add('virus');
-
-// 	console.log(randomizePosition)
-
-// 	// target the virus
-// 	target = randomizePosition.id
-
-// 	rounds++;
-// };
-
-// // Random timer for the virus
-// const virusTimer = () => {
-// 	// let randomizer = Math.floor(Math.random() * (3 - 1 + 1) + 1);
-
-// 	let timer = null;
-// 	timer = setInterval(randomPosition, randomizer * 835);
-// };
-//virusTimer();
-
-
 // Destroy the virus function
-// positionEl.forEach(position => {
-// 	position.addEventListener('click', () => {
-// 		if (position.id === target) {
-// 			// +1 on score
-// 			score++
+positionEl.forEach(position => {
+	position.addEventListener('click', () => {
+		if (position.id === target) {
 
-// 			// add to score needs to be fixed
-// 			userScoreEl.innerText = `${username} Score: ${score}`
-// 			console.log(`${username} Score:`,score);
+			// reset the target
+			target = null
 
-// 			// reset the target
-// 			target = null
-
-// 			// remove the virus from the current spot
-// 			position.classList.remove('virus');
-// 		}
-// 	})
-// });
+			// remove the virus from the current spot
+			position.classList.remove('virus');
+		}
+	})
+});
 
 socket.on('game:over', (playerOne, playerTwo) => {
-	// Hide other sections and how end-screen section
+
+	// Hide other sections and show end-screen section
 	waitingScreenEl.classList.add('hide');
 	gameScreenEl.classList.add('hide');
 	endScreenEl.classList.remove('hide');
