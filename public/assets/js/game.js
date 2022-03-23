@@ -17,6 +17,8 @@ const opponentScoreEl = document.querySelector('#opponent');
 // const scoreEl = document.querySelector('#scores');
 const gameScreenEl = document.querySelector('#game-screen');
 const playerTimeEl = document.querySelector('#userTime h5');
+const roundCountdownEl = document.querySelector('#round-countdown');
+const roundCountdownSpanEl = document.querySelector('#round-countdown span');
 
 // Username to identify client
 let username = null;
@@ -105,19 +107,27 @@ const startTimer = (virusPosition) => {
 	
 }
 
-const cdEl = document.querySelector('#round-countdown');
-const cdSpanEl = document.querySelector('#round-countdown span');
+// Variable to count down before a round starts
 let countdown = 3;
-const countdownBR = (timeToWait, virusPosition) => {
-	countdown--;
-	cdSpanEl.innerText = countdown;
 
+// Function to display countdown to user before starting a new round
+const countdownBR = (timeToWait, virusPosition) => {
+	// Decrease countdown by one
+	countdown--;
+	// Show new countdown number to user
+	roundCountdownSpanEl.innerText = countdown;
+
+	// If countdown reach zero, stop countdown and start round
 	if (countdown === 0) {
 
+		// Stop countdown interval timer
 		clearInterval(roundCountdownInterval);
-		cdEl.classList.add('hide');
+		// Hide countdown display
+		roundCountdownEl.classList.add('hide');
+		// Reset countdown variable for future rounds
 		countdown = 3;
-		cdSpanEl.innerText = countdown;
+		roundCountdownSpanEl.innerText = countdown;
+
 		// Wait before showing user which square to click
 		setTimeout(startTimer, timeToWait, virusPosition);
 	
@@ -133,7 +143,8 @@ const gameRound = (timeToWait, virusPosition) => {
 		position.classList.remove('virus');
 	});
 
-	cdEl.classList.remove('hide');
+	// Start countdown before next round starts
+	roundCountdownEl.classList.remove('hide');
 	roundCountdownInterval = setInterval(countdownBR, 1000, timeToWait, virusPosition);
 	
 }
