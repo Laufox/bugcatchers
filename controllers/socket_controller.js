@@ -50,8 +50,7 @@ const handleUserJoined = function(username, callback) {
 
 	// Have the socket client to join the current room
 	this.join(currentRoom);
-	// Add clients username as property in the current room
-	// currentRoom.players[this.id] = username;
+
 	// Each player object in a room holds info aboiut their name, current score and their previous reaction time
 	currentRoom.players[this.id] = {
 		username,
@@ -117,7 +116,6 @@ const handleDisconnect = function() {
 }
 
 // Compare reaction time and decide who gets score
-// Take room parameter instead of score
 const handleScore = function(reaction, player) {
 	// Find the room this socket is connected to
 	const room = rooms.find(lobby => lobby.players.hasOwnProperty(this.id));
