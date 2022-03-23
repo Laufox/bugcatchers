@@ -21,7 +21,7 @@ let autoWin;
 
 // Set time to wait to a random number between 0 and 5000
 const calcTimeAndPosition = () => {	
-	timeToWait = Math.round(Math.random()*5000);
+	timeToWait = Math.round(Math.random()*4000 + 300);
 	virusPosition = Math.floor(Math.random() * 9);
 } 
 
