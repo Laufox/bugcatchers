@@ -6,7 +6,8 @@ const startScreenEl = document.querySelector('#start-screen');
 const nameFormEl = document.querySelector('#name-form');
 const waitingScreenEl = document.querySelector('#waiting-screen');
 const endScreenEl = document.querySelector('#endResults');
-const userResults = document.querySelector('#endResults h2');
+const winner = document.querySelector('#winnersName');
+const userResults = document.querySelector('#result');
 const playerName = document.querySelector('#user')
 const opponentName = document.querySelector('#opponent')
 const positionEl = document.querySelectorAll('.position');
@@ -22,6 +23,8 @@ const playerTimeEl = document.querySelector('#userTime h5');
 let username = null;
 let opponent = null;
 let room = null;
+let playerDisc = false;
+let autoWin;
 
 // Score
 let score = 0;
@@ -137,6 +140,19 @@ socket.on('user:connected', (username) => {
 	console.log(`${username} has connected`);
 	// When a game is ready to start
 	
+});
+
+socket.on('disconnect', (autoWin) => {
+	stopTimer();
+	playerDisc = true;
+	if(playerDisc) {
+			waitingScreenEl.classList.add('hide');
+			gameScreenEl.classList.add('hide');
+			endScreenEl.classList.remove('hide');
+
+			winner.innerHTML = `${autoWin.username} wins!`
+			userResults.innerHTML = `Opponent Disconnected`
+		}
 });
 
 // When a game/round is ready to start
@@ -262,22 +278,22 @@ positionEl.forEach(position => {
 	})
 });
 
+
 const GameOver = () => {
 
 	waitingScreenEl.classList.add('hide');
 	gameScreenEl.classList.add('hide');
 	endScreenEl.classList.remove('hide');
 
-	// Player1Score och Player2Score är bara placeholders!!
-	if(player1Score > player2Score) {
-		userResults.innerHTML = `Result:${score}`// socket_controller ska skicka resultat hit
-		userResults.classList.add('winResult');
+	if(player1Score.points > player2Score) {
+		winner.innerHTML = `${player1Score} wins!`
+		userResults.innerHTML = `Result:${score}`
 
-	} else if (player1Score > player2Score) {
-		userResults.innerHTML = `Result: ${score}`// socket_controller ska skicka resultat hit
-		userResults.classList.add('loseResult');
-
+	} else if (player1Score < player2Score) {
+		winner.innerHTML = `${player2Score} wins!`
+		userResults.innerHTML = `Result: ${score}`
+		
 	} else if(player1Score == player2Score) {
-		userResults.innerHTML = `It's a tie! Result:${score}`// socket_controller ska skicka resultat hit
+		userResults.innerHTML = `It's a tie! Result:${score}`
 	}
 }
