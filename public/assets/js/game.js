@@ -214,34 +214,6 @@ nameFormEl.addEventListener('submit', (e) => {
 	userScoreEl.innerText = `${username} Score:`
 });
 
-// Function to random position the viruses
-// const randomPosition = () => {
-// 	positionEl.forEach(position => {
-// 		position.classList.remove('virus');
-// 	});
-
-// 	// randomize the position for the viruses
-// 	let randomizePosition = positionEl[Math.floor(Math.random() * 9)]
-// 	randomizePosition.classList.add('virus');
-
-// 	console.log(randomizePosition)
-
-// 	// target the virus
-// 	target = randomizePosition.id
-
-// 	rounds++;
-// };
-
-// // Random timer for the virus
-// const virusTimer = () => {
-// 	// let randomizer = Math.floor(Math.random() * (3 - 1 + 1) + 1);
-
-// 	let timer = null;
-// 	timer = setInterval(randomPosition, randomizer * 835);
-// };
-//virusTimer();
-
-
 // Destroy the virus function
 positionEl.forEach(position => {
 	position.addEventListener('click', () => {
