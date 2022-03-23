@@ -26,7 +26,8 @@ let opponent = null;
 let room = null;
 
 // Score
-let score = 0;
+let userScore = 0;
+let opponentScore = 0;
 
 // Rounds
 let rounds = 0;
@@ -66,6 +67,10 @@ const stopTimer = () => {
 
 	// Remove the click event from secretSquare
 	randomizePositionEl.removeEventListener('click', stopTimer);
+
+	// Remove virus from element
+	randomizePositionEl.classList.remove('virus');
+
 	// Give time to server
 	socket.emit('game:round-result', timePassed, username);
 
@@ -159,9 +164,9 @@ socket.on('game:print-round', (winner, players) => {
 	document.querySelector('#opponentTime h5').innerText = `${Math.floor(opponent.previousReactionTime/1000)} : ${opponent.previousReactionTime%1000}`;
 	// --- Print round result based on if won or not ---
 	if (winner === username) {
-		console.log('I won');
+		userScoreEl.innerText = `${username} score: ${++userScore}`;
 	} else {
-		console.log('I lost');
+		opponentScoreEl.innerText = `${opponent.username} score: ${++opponentScore}`;
 	}
 });
 
@@ -179,6 +184,8 @@ socket.on('game:start', (timeToWait, virusPosition, players) => {
 	waitingScreenEl.classList.add('hide');
 	gameScreenEl.classList.remove('hide');
 
+	userScoreEl.innerText = `${username} score: ${userScore}`;
+	opponentScoreEl.innerText = `${Object.values(players).find( player => player.username !== username).username} score: ${opponentScore}`;
 	
 	playerNames(players);
 
@@ -207,7 +214,7 @@ const playerNames = (players) => {
 
 	opponent = playerNames;
 
-	opponentScoreEl.innerText = `${opponent} Score: ${score}`
+	//opponentScoreEl.innerText = `${opponent} Score: ${score}`
 }
 
 // Event listener for when a user submits the name form
@@ -237,6 +244,8 @@ nameFormEl.addEventListener('submit', (e) => {
 				console.log("Game will begin");
 				waitingScreenEl.classList.add('hide');
 				gameScreenEl.classList.remove('hide');
+				userScoreEl.innerText = `${username} score: ${userScore}`;
+				opponentScoreEl.innerText = `${Object.values(status.players).find( player => player.username !== username).username} score: ${opponentScore}`;
 				playerNames(status.players);
 				gameRound(status.timeToWait, status.virusPosition);
 			}
@@ -244,7 +253,7 @@ nameFormEl.addEventListener('submit', (e) => {
 	})
 
 	// opponentScoreEl.innerText = `${opponent} Score:`
-	userScoreEl.innerText = `${username} Score:`
+	
 });
 
 // Function to random position the viruses
@@ -276,24 +285,24 @@ nameFormEl.addEventListener('submit', (e) => {
 
 
 // Destroy the virus function
-positionEl.forEach(position => {
-	position.addEventListener('click', () => {
-		if (position.id === target) {
-			// +1 on score
-			score++
+// positionEl.forEach(position => {
+// 	position.addEventListener('click', () => {
+// 		if (position.id === target) {
+// 			// +1 on score
+// 			score++
 
-			// add to score needs to be fixed
-			userScoreEl.innerText = `${username} Score: ${score}`
-			console.log(`${username} Score:`,score);
+// 			// add to score needs to be fixed
+// 			userScoreEl.innerText = `${username} Score: ${score}`
+// 			console.log(`${username} Score:`,score);
 
-			// reset the target
-			target = null
+// 			// reset the target
+// 			target = null
 
-			// remove the virus from the current spot
-			position.classList.remove('virus');
-		}
-	})
-});
+// 			// remove the virus from the current spot
+// 			position.classList.remove('virus');
+// 		}
+// 	})
+// });
 
 const GameOver = () => {
 
