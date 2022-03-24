@@ -17,6 +17,7 @@ const opponentScoreEl = document.querySelector('#opponent');
 const gameScreenEl = document.querySelector('#game-screen');
 const playerTimeEl = document.querySelector('#userTime h5');
 const roundCountdownEl = document.querySelector('#round-countdown');
+const roundCountdownInfoEl = document.querySelector('#round-countdown p');
 const roundCountdownSpanEl = document.querySelector('#round-countdown span');
 const virusFieldEl = document.querySelector('#virus-field');
 const playingFieldEl = document.querySelector('#playing-field');
@@ -183,8 +184,16 @@ socket.on('game:print-round', (winner, players) => {
 	// Increase score for the player that won
 	if (winner === username) {
 		userScoreEl.innerText = `${username} score: ${++userScore}`;
+		// Inform user if they won the round or not
+		roundCountdownInfoEl.innerText = 'You won the round!';
+		roundCountdownInfoEl.classList.add('won-round');
+		roundCountdownInfoEl.classList.remove('lost-round');
 	} else {
 		opponentScoreEl.innerText = `${opponent.username} score: ${++opponentScore}`;
+		// Inform user if they won the round or not
+		roundCountdownInfoEl.innerText = 'You lost the round!';
+		roundCountdownInfoEl.classList.add('lost-round');
+		roundCountdownInfoEl.classList.remove('won-round');
 	}
 });
 

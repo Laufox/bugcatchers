@@ -87,10 +87,19 @@ marquee {
 	height: 100%;
 	background-color: rgba(100,100,100,0.3);
 	display: flex;
+	flex-flow: column;
 	justify-content: center;
 	align-items: center;
 	font-size: 2rem;
 	border-radius: 10px;
+}
+
+.won-round {
+	color: rgb(80, 155, 80);
+}
+
+.lost-round {
+	color: rgb(199, 76, 76);
 }
 
 #scores {
