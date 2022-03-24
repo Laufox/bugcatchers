@@ -204,24 +204,17 @@ socket.on('user:connected', (username) => {
 	
 });
 
+// If the other player disconnected
+socket.on('game:walkover', () => {
+	// Switch active screen
+	waitingScreenEl.classList.add('hide');
+	gameScreenEl.classList.add('hide');
+	endScreenEl.classList.remove('hide');
 
-socket.on('disconnect', () => {
-	stopTimer();
-	playerDisc = true;
-	autoWin(playerDisc);
+	// Inform user they won due to another player leaving the room
+	winner.innerHTML = `You win!`
+	userResults.innerHTML = `Opponent disconnected`
 });
-
-
-const autoWin = () => {
-	if(playerDisc) {
-		waitingScreenEl.classList.add('hide');
-		gameScreenEl.classList.add('hide');
-		endScreenEl.classList.remove('hide');
-
-		winner.innerHTML = `You win!`
-		userResults.innerHTML = `Opponent disconnected`
-	}
-}
 
 // When a game/round is ready to start
 socket.on('game:start', (timeToWait, virusPosition, players) => {

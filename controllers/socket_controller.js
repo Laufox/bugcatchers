@@ -115,16 +115,21 @@ const handleDisconnect = function() {
 	if(!room) {
 		return;
 	}
-	// Delete the player from the room
+	
 	console.log("Player Username:", room.players[this.id].username);
-	delete room.players[this.id];
 
 	console.log("Other player automatically wins", room.players);
 
 	debug('WQ on DC: ', waitingQueue);
+	// If client was in waiting queue, decrease waitingqueue variable and remove player
 	if (room.gameStatus === 'waiting') {
 		waitingQueue--;
 		room.numberOfPlayers--;
+		delete room.players[this.id];
+	}else if (room.gameStatus === 'ongoing') {
+		// If the game was ongoing, give other player automatic victory
+		room.numberOfPlayers--;
+		this.broadcast.to(room).emit('game:walkover');
 	}
 	
 }
