@@ -290,6 +290,11 @@ nameFormEl.addEventListener('submit', (e) => {
 				playerNames(status.players);
 				gameRound(status.timeToWait, status.virusPosition);
 			}
+			
+		} else if (!status.success) {
+			// If status.succes did not come back true, inform user with error message
+			document.querySelector('#username-error').classList.remove('hide');
+			document.querySelector('#username-error').innerText = status.msg;
 		}
 	})
 

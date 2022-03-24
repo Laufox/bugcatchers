@@ -35,7 +35,7 @@ const handleUserJoined = function(username, callback) {
 		rooms.push({
 			// Set room id to numberOfRooms variable, then increase the numberOfRooms variable
 			room_id: numberOfRooms++,
-			// numberOfPlayers: 0, 			-- Might be needed later
+			numberOfPlayers: 0,
 			gameStatus: 'waiting',
 			// Object property to hold info about the users that is in the room
 			players: {},
@@ -46,7 +46,18 @@ const handleUserJoined = function(username, callback) {
 
 	// Use the latest room pushed to the rooms array so that we can add info to it 
 	const currentRoom = rooms[rooms.length - 1];
-	// currentRoom.numberOfPlayers++;	-- Might be needed later
+
+	// If there is already a user with same name, callback to inform client
+	if (currentRoom.numberOfPlayers > 0 && Object.values(currentRoom.players)[0].username === username) {
+		callback({
+			success: false,
+			msg: 'Username already taken, chose another one',
+		});
+		return;
+	}
+
+	// Increase the number of players in the room
+	currentRoom.numberOfPlayers++;
 
 	// Have the socket client to join the current room
 	this.join(currentRoom);
@@ -113,6 +124,7 @@ const handleDisconnect = function() {
 	debug('WQ on DC: ', waitingQueue);
 	if (room.gameStatus === 'waiting') {
 		waitingQueue--;
+		room.numberOfPlayers--;
 	}
 	
 }
