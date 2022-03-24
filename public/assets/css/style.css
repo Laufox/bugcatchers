@@ -94,6 +94,14 @@ marquee {
 	border-radius: 10px;
 }
 
+.winResult {
+	color: green;
+}
+
+.loseResult {
+	color: red;
+}
+
 .won-round {
 	color: rgb(80, 155, 80);
 }
