@@ -51,7 +51,7 @@ const handleUserJoined = function(username, callback) {
 	if (currentRoom.numberOfPlayers > 0 && Object.values(currentRoom.players)[0].username === username) {
 		callback({
 			success: false,
-			msg: 'Username already taken, chose another one',
+			msg: 'Username already taken, choose another one',
 		});
 		return;
 	}
