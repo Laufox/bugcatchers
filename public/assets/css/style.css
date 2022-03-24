@@ -65,6 +65,10 @@ marquee {
 	cursor: url('../icons/space-gun.png'), auto;
 }
 
+.aim {
+	cursor: url('../icons/space-gun-tilted.png'), auto;
+}
+
 .position {
 	height: 28%;
 	width: 28%;

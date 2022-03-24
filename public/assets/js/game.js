@@ -19,6 +19,7 @@ const playerTimeEl = document.querySelector('#userTime h5');
 const roundCountdownEl = document.querySelector('#round-countdown');
 const roundCountdownSpanEl = document.querySelector('#round-countdown span');
 const virusFieldEl = document.querySelector('#virus-field');
+const playingFieldEl = document.querySelector('#playing-field');
 
 // Username to identify client
 let username = null;
@@ -336,4 +337,13 @@ socket.on('game:over', (playerOne, playerTwo) => {
 	} else if(self.points === opponent.points) {
 		userResults.innerHTML = `It's a tie! Score: ${self.points} - ${opponent.points}`;
 	}
+});
+
+// Change cursor image while mouse-button is being held down
+playingFieldEl.addEventListener('mousedown', () => {
+	document.querySelector('#playing-field').classList.add('aim');
+});
+
+playingFieldEl.addEventListener('mouseup', () => {
+	document.querySelector('#playing-field').classList.remove('aim');
 });
