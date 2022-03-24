@@ -21,7 +21,7 @@ let virusPosition = null;
 // Set time to wait to a random number between 300 and 4300
 const calcTimeAndPosition = () => {	
 	timeToWait = Math.round(Math.random()*4000 + 300);
-	virusPosition = Math.floor(Math.random() * 9);
+	virusPosition = Math.floor(Math.random() * 16);
 } 
 
 // When a user joins a room
