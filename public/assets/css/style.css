@@ -88,3 +88,13 @@ marquee {
 	font-size: 2rem;
 	border-radius: 10px;
 }
+
+#scores {
+	padding: 1rem;
+	background-color: rgb(216, 216, 208);
+}
+
+#time-stamp {
+	padding: 1rem;
+	background-color: rgb(200, 200, 230);
+}
