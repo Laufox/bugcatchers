@@ -15,10 +15,10 @@ let numberOfRooms = 0;
 let waitingQueue = 0;
 // Time to wait before virus pop ups
 let timeToWait = 0;
+// Position for virus to pop up
 let virusPosition = null;
-let currentRoom;
 
-// Set time to wait to a random number between 0 and 5000
+// Set time to wait to a random number between 300 and 4300
 const calcTimeAndPosition = () => {	
 	timeToWait = Math.round(Math.random()*4000 + 300);
 	virusPosition = Math.floor(Math.random() * 9);
@@ -35,7 +35,9 @@ const handleUserJoined = function(username, callback) {
 		rooms.push({
 			// Set room id to numberOfRooms variable, then increase the numberOfRooms variable
 			room_id: numberOfRooms++,
+			// Variable for how many players that is in the room
 			numberOfPlayers: 0,
+			// Status of the room, is either 'waiting', 'ongoing' or 'finished'
 			gameStatus: 'waiting',
 			// Object property to hold info about the users that is in the room
 			players: {},
@@ -77,7 +79,7 @@ const handleUserJoined = function(username, callback) {
 	debug('WQ after increase: ', waitingQueue);
 	// If there is two clients in queue, prepare to start the game
 	if (waitingQueue === 2) {
-		debug('Client ready to start new game');
+		debug('Server ready to start new game');
 		debug(currentRoom.players);
 		// Reset waiting queue variable
 		waitingQueue = 0;
@@ -85,20 +87,16 @@ const handleUserJoined = function(username, callback) {
 		currentRoom.gameStatus = 'ongoing',
 		// Set startGame variable to true
 		startGame = true;
-		// Call function to set set timer
+		// Call function to set set random timer and position
 		calcTimeAndPosition();
+		io.in(currentRoom).emit('print:names', currentRoom.players);
 		// Tell the other clients in the room that a new game should start
-		this.broadcast.to(currentRoom).emit('game:start', timeToWait, virusPosition, currentRoom.players);
+		this.broadcast.to(currentRoom).emit('game:start', timeToWait, virusPosition);
 	}
-
-	// Let everyone know a client has connected
-	// this.broadcast.emit('user:connected', username);
 
 	// Callback to client
 	callback({
 		success: true,
-		room: currentRoom.room_id,
-		players: currentRoom.players,
 		startGame,
 		timeToWait,
 		virusPosition,
@@ -111,14 +109,12 @@ const handleDisconnect = function() {
 
 	// Find the room this socket is connected to
 	const room = rooms.find(lobby => lobby.players.hasOwnProperty(this.id));
-	//If socket is not in a room, do nothing and return
+	// If socket is not in a room, do nothing and return
 	if(!room) {
 		return;
 	}
 	
-	console.log("Player Username:", room.players[this.id].username);
-
-	console.log("Other player automatically wins", room.players);
+	debug("Player Username:", room.players[this.id].username);
 
 	debug('WQ on DC: ', waitingQueue);
 	// If client was in waiting queue, decrease waitingqueue variable and remove player
@@ -135,7 +131,7 @@ const handleDisconnect = function() {
 }
 
 // Compare reaction time and decide who gets score
-const handleScore = function(reaction, player) {
+const handleScore = function(reaction) {
 	// Find the room this socket is connected to
 	const room = rooms.find(lobby => lobby.players.hasOwnProperty(this.id));
 	
@@ -180,7 +176,7 @@ const handleScore = function(reaction, player) {
 
 		// If Rounds played is less than 10, start a new round. Otherwise finish game
 		if(room.roundsplayed < 10) {
-			// Calculate a new random tim ena position
+			// Calculate a new random time and position
 			calcTimeAndPosition();
 			// Start new round
 			io.in(room).emit('game:start', timeToWait, virusPosition, room.players);

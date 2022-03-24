@@ -6,47 +6,34 @@ const startScreenEl = document.querySelector('#start-screen');
 const nameFormEl = document.querySelector('#name-form');
 const waitingScreenEl = document.querySelector('#waiting-screen');
 const endScreenEl = document.querySelector('#endResults');
-const winner = document.querySelector('#winnersName');
-const userResults = document.querySelector('#result');
-const playerName = document.querySelector('#user')
-const opponentName = document.querySelector('#opponent')
+const winnerEl = document.querySelector('#winnersName');
+const userResultEl = document.querySelector('#result');
 const positionEl = document.querySelectorAll('.position');
-const timestampEl = document.querySelector('#time-stamp');
 const userScoreEl = document.querySelector('#user');
 const opponentScoreEl = document.querySelector('#opponent');
 const gameScreenEl = document.querySelector('#game-screen');
 const playerTimeEl = document.querySelector('#userTime h5');
+const opponentTimeEl = document.querySelector('#opponentTime h5');
 const roundCountdownEl = document.querySelector('#round-countdown');
 const roundCountdownInfoEl = document.querySelector('#round-countdown p');
 const roundCountdownSpanEl = document.querySelector('#round-countdown span');
-const virusFieldEl = document.querySelector('#virus-field');
 const playingFieldEl = document.querySelector('#playing-field');
+const usernameErrorEl = document.querySelector('#username-error');
 
-// Username to identify client
+// Variables to to identify names of client and opponent
 let username = null;
 let opponent = null;
-let room = null;
-let playerDisc = false;
 
 // Score
 let userScore = 0;
 let opponentScore = 0;
-
-// Rounds
-let rounds = 0;
-
-// The target to kill virus
-let target;
-
-// Randomizer
-let randomizer = Math.floor(Math.random() * (3 - 1 + 1) + 1);
 
 // Variable for time passed before user clicks
 let timePassed = null;
 
 // Variable for the timer that will update and render timer to user
 let timer = null;
-let oTimer = null;
+let opponentTimer = null;
 
 // Variable for amount of milliseconds since 1 Jan 1970 at the point when the timer starts 
 let timeBeforeRound = null;
@@ -58,7 +45,6 @@ let roundCountdownInterval = null;
 // Variable to count down before a round starts
 let countdown = 3;
 
-
 // Funtion to stop timer and calculate player click time
 const stopTimer = () => {
 	// Stop the interval timer that prints time to user
@@ -66,7 +52,6 @@ const stopTimer = () => {
 
 	// Calculate how long time it took for the player to click
 	timePassed = Date.now() - timeBeforeRound;
-	console.log('It took you ' + timePassed + ' milliseconds to click');
 
 	// Show user the final time
 	playerTimeEl.innerText = `${Math.floor(timePassed/1000)} : ${timePassed%1000}`;
@@ -78,19 +63,15 @@ const stopTimer = () => {
 	randomizePositionEl.classList.remove('virus');
 
 	// Give time to server
-	socket.emit('game:round-result', timePassed, username);
+	socket.emit('game:round-result', timePassed);
 };
 
-
 const startTimer = (virusPosition) => {
-	console.log("Wait time over, lets start!");
-	console.log("Round", rounds)
 	
 	// Reset user click time
 	timePassed = 0;
 	// Get the amount of milliseconds since 1 Jan 1970
 	timeBeforeRound = Date.now();
-	console.log(timeBeforeRound);
 	// Update user with timer repeatedly 
 	timer = setInterval( () => {
 		timePassed = Date.now() - timeBeforeRound;
@@ -98,28 +79,22 @@ const startTimer = (virusPosition) => {
 	}, 10 );
 
 	// Display estimated time for opponent during round
-	oTimer = setInterval( () => {
-		let oTime = Date.now() - timeBeforeRound;
-		document.querySelector('#opponentTime h5').innerText = `${Math.floor(oTime/1000)} : ${oTime%1000}`;
+	opponentTimer = setInterval( () => {
+		let opponentTime = Date.now() - timeBeforeRound;
+		opponentTimeEl.innerText = `${Math.floor(opponentTime/1000)} : ${opponentTime%1000}`;
 	}, 10 );
 
-	// User virusPosition from server to pick wich div the virus gonna be at
+	// Use virusPosition from server to pick wich div the virus gonna be at
 	randomizePositionEl = positionEl[virusPosition];
 	randomizePositionEl.classList.add('virus');
 
-	target = randomizePositionEl.id;
-
 	// Add eventlistener for secret square that the user has to click
-	// --- Change from game screen to the specific square --
 	randomizePositionEl.addEventListener('click', stopTimer);
-	rounds++;
-	console.log("Rounds played:",rounds)
 	
 };
 
-
 // Function to display countdown to user before starting a new round
-const countdownBR = (timeToWait, virusPosition) => {
+const countdownBeforeRound = (timeToWait, virusPosition) => {
 	// Decrease countdown by one
 	countdown--;
 	// Show new countdown number to user
@@ -149,37 +124,31 @@ const countdownBR = (timeToWait, virusPosition) => {
 	}
 };
 
-
 // Function to start up a new round
 const gameRound = (timeToWait, virusPosition) => {
-	console.log("Starting timer " + timeToWait + " for virus on position " + virusPosition);
 
-	// Make sure no div have virus class attached
+	// Make sure no div have virus class attached and hide them while countdown scrren is on display
 	positionEl.forEach(position => {
 		position.classList.remove('virus');
+		position.classList.add('hide');
 	});
 
 	// Start countdown before next round starts
 	roundCountdownEl.classList.remove('hide');
-	roundCountdownInterval = setInterval(countdownBR, 1000, timeToWait, virusPosition);
+	roundCountdownInterval = setInterval(countdownBeforeRound, 1000, timeToWait, virusPosition);
 
-	// Hide virus field
-	positionEl.forEach(position => {
-		position.classList.add('hide');
-	});
 };
 
-
+// Function to update game screen with previous round result
 socket.on('game:print-round', (winner, players) => {
 	// Get the opponent player
 	const opponent = Object.values(players).find( player => player.username !== username);
-	console.log(opponent);
 
 	// Stop timer for opponent
-	clearInterval(oTimer);
+	clearInterval(opponentTimer);
 
 	// Set final time for opponent
-	document.querySelector('#opponentTime h5').innerText = `${Math.floor(opponent.previousReactionTime/1000)} : ${opponent.previousReactionTime%1000}`;
+	opponentTimeEl.innerText = `${Math.floor(opponent.previousReactionTime/1000)} : ${opponent.previousReactionTime%1000}`;
 	
 	// Increase score for the player that won
 	if (winner === username) {
@@ -197,13 +166,6 @@ socket.on('game:print-round', (winner, players) => {
 	}
 });
 
-// When another client connects
-socket.on('user:connected', (username) => {
-	console.log(`${username} has connected`);
-	// When a game is ready to start
-	
-});
-
 // If the other player disconnected
 socket.on('game:walkover', () => {
 	// Switch active screen
@@ -212,13 +174,12 @@ socket.on('game:walkover', () => {
 	endScreenEl.classList.remove('hide');
 
 	// Inform user they won due to another player leaving the room
-	winner.innerHTML = `You win!`
-	userResults.innerHTML = `Opponent disconnected`
+	winnerEl.innerHTML = `You win!`
+	userResultEl.innerHTML = `Opponent disconnected`
 });
 
 // When a game/round is ready to start
-socket.on('game:start', (timeToWait, virusPosition, players) => {
-	console.log('Opponent found, game will begin');
+socket.on('game:start', (timeToWait, virusPosition) => {
 
 	// Hide waiting screen and display game screen
 	waitingScreenEl.classList.add('hide');
@@ -226,97 +187,35 @@ socket.on('game:start', (timeToWait, virusPosition, players) => {
 
 	// Update the score
 	userScoreEl.innerText = `${username} score: ${userScore}`;
-	opponentScoreEl.innerText = `${Object.values(players).find( player => player.username !== username).username} score: ${opponentScore}`;
-	
-	playerNames(players);
+	opponentScoreEl.innerText = `${opponent} score: ${opponentScore}`;
 
 	// Start a new round with time and position given by server
 	gameRound(timeToWait, virusPosition);
 });
 
+// To know the names of both players
+socket.on('print:names', (players) => {
 
-const playerNames = (players) => {
+	// Set users own name
 	username = nameFormEl.username.value;
-	console.log('Players: ', players);
 
+	// Turn players object to array
 	const playerList = Object.values(players);
 	const playerNames = [];
 
+	// Sort out both players name
 	playerList.forEach( (player) => {
 		playerNames.push(player.username);
 	} );
-	
-	console.log('List of players: ', playerNames);
-	console.log(playerNames.indexOf(username));
+
+	// Remove own name from array and set it's value as name of opponent
 	const player1 = playerNames.indexOf(username);
 	playerNames.splice(player1, 1);
-
-	console.log(playerNames);
-
 	opponent = playerNames;
 
-	//opponentScoreEl.innerText = `${opponent} Score: ${score}`
-}
-
-// Event listener for when a user submits the name form
-nameFormEl.addEventListener('submit', (e) => {
-	e.preventDefault();
- 
-	// Take username from the form submitted
-	username = nameFormEl.username.value;
-	
-	// Inform the socket that client wants to join the game
-	socket.emit('user:joined', username, (status) => {
-		// If the server returns a successful callback
-		if (status.success) {
-			console.log('Welcome ', username);
-
-			// Hide start-screen element
-			startScreenEl.classList.add('hide');
-
-			console.log(status.players);
-
-			// Show waiting-screen element
-			waitingScreenEl.classList.remove('hide');
-
-			// Set room client is part of to room id given back by server
-			room = status.room;
-
-			// If the startGame property from callback is true, start new game 
-			if (status.startGame) {
-				console.log("Game will begin");
-				waitingScreenEl.classList.add('hide');
-				gameScreenEl.classList.remove('hide');
-				// Initialize score-table for player and opponent
-				userScoreEl.innerText = `${username} score: ${userScore}`;
-				opponentScoreEl.innerText = `${Object.values(status.players).find( player => player.username !== username).username} score: ${opponentScore}`;
-				playerNames(status.players);
-				gameRound(status.timeToWait, status.virusPosition);
-			}
-			
-		} else if (!status.success) {
-			// If status.succes did not come back true, inform user with error message
-			document.querySelector('#username-error').classList.remove('hide');
-			document.querySelector('#username-error').innerText = status.msg;
-		}
-	})
-
 });
 
-// Destroy the virus function
-positionEl.forEach(position => {
-	position.addEventListener('click', () => {
-		if (position.id === target) {
-
-			// reset the target
-			target = null
-
-			// remove the virus from the current spot
-			position.classList.remove('virus');
-		}
-	})
-});
-
+// Function for when game is finished
 socket.on('game:over', (playerOne, playerTwo) => {
 
 	// Hide other sections and show end-screen section
@@ -331,21 +230,58 @@ socket.on('game:over', (playerOne, playerTwo) => {
 	
 	// Compare client and opponent score to find out who won
 	if(self.points > opponent.points) {
-		userResults.innerHTML = `You won! Score: ${self.points} - ${opponent.points}`;
-		userResults.classList.add('winResult');
+		userResultEl.innerHTML = `You won! Score: ${self.points} - ${opponent.points}`;
+		userResultEl.classList.add('winResult');
 	} else if (opponent.points > self.points) {
-		userResults.innerHTML = `You lost! Score: ${self.points} - ${opponent.points}`;
-		userResults.classList.add('loseResult');
+		userResultEl.innerHTML = `You lost! Score: ${self.points} - ${opponent.points}`;
+		userResultEl.classList.add('loseResult');
 	} else if(self.points === opponent.points) {
-		userResults.innerHTML = `It's a tie! Score: ${self.points} - ${opponent.points}`;
+		userResultEl.innerHTML = `It's a tie! Score: ${self.points} - ${opponent.points}`;
 	}
+});
+
+// Event listener for when a user submits the name form
+nameFormEl.addEventListener('submit', (e) => {
+	e.preventDefault();
+ 
+	// Take username from the form submitted
+	username = nameFormEl.username.value;
+	
+	// Inform the socket that client wants to join the game
+	socket.emit('user:joined', username, (status) => {
+		// If the server returns a successful callback
+		if (status.success) {
+
+			// Hide start-screen element
+			startScreenEl.classList.add('hide');
+
+			// Show waiting-screen element
+			waitingScreenEl.classList.remove('hide');
+
+			// If the startGame property from callback is true, start new game 
+			if (status.startGame) {
+				waitingScreenEl.classList.add('hide');
+				gameScreenEl.classList.remove('hide');
+				// Initialize score-table for player and opponent
+				userScoreEl.innerText = `${username} score: ${userScore}`;
+				opponentScoreEl.innerText = `${opponent} score: ${opponentScore}`;
+				gameRound(status.timeToWait, status.virusPosition);
+			}
+			
+		} else if (!status.success) {
+			// If status.succes did not come back true, inform user with error message
+			usernameErrorEl.classList.remove('hide');
+			usernameErrorEl.innerText = status.msg;
+		}
+	})
+
 });
 
 // Change cursor image while mouse-button is being held down
 playingFieldEl.addEventListener('mousedown', () => {
-	document.querySelector('#playing-field').classList.add('aim');
+	playingFieldEl.classList.add('aim');
 });
 
 playingFieldEl.addEventListener('mouseup', () => {
-	document.querySelector('#playing-field').classList.remove('aim');
+	playingFieldEl.classList.remove('aim');
 });

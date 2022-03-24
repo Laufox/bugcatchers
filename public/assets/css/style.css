@@ -82,7 +82,6 @@ marquee {
 	margin: 12px;
 }
 
-
 #round-countdown {
 	height: 100%;
 	background-color: rgba(100,100,100,0.3);
@@ -95,11 +94,15 @@ marquee {
 }
 
 .winResult {
+	padding: 1rem;
 	color: green;
+	background-color: rgb(168, 168, 168);
 }
 
 .loseResult {
+	padding: 1rem;
 	color: red;
+	background-color: rgb(168, 168, 168);
 }
 
 .won-round {
@@ -118,4 +121,8 @@ marquee {
 #time-stamp {
 	padding: 1rem;
 	background-color: rgb(200, 200, 230);
+}
+
+#time-stamp p {
+	font-size: 1.3rem;
 }
