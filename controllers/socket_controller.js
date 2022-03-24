@@ -185,6 +185,7 @@ const handleScore = function(reaction, player) {
 			// Start new round
 			io.in(room).emit('game:start', timeToWait, virusPosition, room.players);
 		} else {
+			room.gameStatus = 'finished';
 			// Send final result to clients
 			io.in(room).emit('game:over', playerOne, playerTwo);
 		}
